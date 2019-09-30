@@ -13,14 +13,14 @@ namespace kMCCoatings.Core.Entities
 
         public int Lz { get; set; }
 
-        public Cell.Cell[,,] Cells { get; set; }
+        public Dictionary<GlobalCoordinates, Cell.Cell> Cells { get; set; }
 
         public Dimension(int lx, int ly, int lz)
         {
             Lx = lx;
             Ly = ly;
             Lz = lz;
-            Cells = new Cell.Cell[Lx, Ly, Lz];
+            Cells = new Dictionary<GlobalCoordinates, Cell.Cell>();
             GenerateCells();
         }
 
@@ -32,10 +32,12 @@ namespace kMCCoatings.Core.Entities
                 {
                     for (int z = 0; z < Lz; z++)
                     {
-                        Cells[x, y, z] = new Cell.Cell()
-                        {
-                            Neighbors = NeigboreCellsCoordinates(x, y, z)
-                        };
+                        Cells.Add(
+                            new GlobalCoordinates(x, y, z, Lx, Ly),
+                            new Cell.Cell()
+                            {
+                                Neighbors = NeigboreCellsCoordinates(x, y, z)
+                            });
                     }
                 }
             }
