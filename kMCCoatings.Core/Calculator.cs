@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace kMCCoatings.Core
 {
@@ -31,7 +32,10 @@ namespace kMCCoatings.Core
         }
 
 
-
+        /// <summary>
+        /// Найти возможные сайты для атома
+        /// </summary>
+        /// <param name="atom"></param>
         public void FindPossibleSitesForAtom(Atom atom)
         {
 
@@ -47,6 +51,10 @@ namespace kMCCoatings.Core
         /// </remarks>
         public void FirstDiffusionAfterDeposition()
         {
+            Parallel.ForEach(Transitions, trans =>
+            {
+
+            });
             // Перебираем каждый атом после первого напыления
             foreach (var cell in Dimension.Cells.Values.Where(c => c.OccupiedSite != null))
             {
@@ -83,6 +91,12 @@ namespace kMCCoatings.Core
 
         }
 
+        /// <summary>
+        /// Рассчитать переходы
+        /// </summary>
+        /// <param name="occupiedSite"></param>
+        /// <param name="sites"></param>
+        /// <returns></returns>
         public List<Transition> CalculateTransitions(Site occupiedSite, List<Site> sites)
         {
             var transtions = new List<Transition>();

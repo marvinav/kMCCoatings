@@ -39,5 +39,10 @@ namespace kMCCoatings.Core.Entities.Site
         /// </summary>
         public int[] AtomTypeIds { get; set; }
 
+        /// <summary>
+        /// Идентификатор Id диммера, к которому относится атом
+        /// </summary>
+        public int DimerId { get; set; }
+
     }
 }
