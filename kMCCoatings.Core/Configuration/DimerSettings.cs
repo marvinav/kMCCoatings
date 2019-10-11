@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kMCCoatings.Core.Configuration
 {
-    class DimerSettings
+    public class DimerSettings
     {
     }
 }

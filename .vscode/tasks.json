@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build console",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -14,25 +14,22 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "publish",
+            "label": "build all",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "publish",
-                "${workspaceFolder}/kMCCoatings.Console/kMCCoatings.Console.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "build",
+                "${workspaceFolder}"
             ],
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "run test",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/kMCCoatings.Console/kMCCoatings.Console.csproj",
+                "test",
+                "${workspaceFolder}/kMCCoatings.Test/kMCCoatings.Test.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

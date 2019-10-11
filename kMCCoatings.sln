@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kMCCoatings.Console", "kMCC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kMCCoatings.Core", "kMCCoatings.Core\kMCCoatings.Core.csproj", "{A946E2AD-A769-42E2-9319-A12F74F7BA66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kMCCoatings.Test", "kMCCoatings.Test\kMCCoatings.Test.csproj", "{CD3B9186-3A1F-47B6-95DA-0AAC98AA53E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A946E2AD-A769-42E2-9319-A12F74F7BA66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A946E2AD-A769-42E2-9319-A12F74F7BA66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A946E2AD-A769-42E2-9319-A12F74F7BA66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD3B9186-3A1F-47B6-95DA-0AAC98AA53E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD3B9186-3A1F-47B6-95DA-0AAC98AA53E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD3B9186-3A1F-47B6-95DA-0AAC98AA53E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3B9186-3A1F-47B6-95DA-0AAC98AA53E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
