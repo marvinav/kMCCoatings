@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using kMCCoatings.Core.Entities.CellRoot;
 
 namespace kMCCoatings.Core.Entities
 {
@@ -13,14 +14,14 @@ namespace kMCCoatings.Core.Entities
 
         public int Lz { get; set; }
 
-        public Dictionary<GlobalCoordinates, Cell.Cell> Cells { get; set; }
+        public Dictionary<GlobalCoordinates, Cell> Cells { get; set; }
 
         public Dimension(int lx, int ly, int lz)
         {
             Lx = lx;
             Ly = ly;
             Lz = lz;
-            Cells = new Dictionary<GlobalCoordinates, Cell.Cell>();
+            Cells = new Dictionary<GlobalCoordinates, Cell>();
             GenerateCells();
         }
 
@@ -34,7 +35,7 @@ namespace kMCCoatings.Core.Entities
                     {
                         Cells.Add(
                             new GlobalCoordinates(x, y, z, Lx, Ly),
-                            new Cell.Cell()
+                            new Cell()
                             {
                                 Neighbors = NeigboreCellsCoordinates(x, y, z)
                             });

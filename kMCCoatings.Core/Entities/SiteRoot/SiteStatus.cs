@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace kMCCoatings.Core.Entities.Site
+namespace kMCCoatings.Core.Entities.SiteRoot
 {
     public enum SiteStatus
     {

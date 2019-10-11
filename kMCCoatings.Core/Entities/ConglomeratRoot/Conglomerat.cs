@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace kMCCoatings.Core.Entities.Conglomerat
+namespace kMCCoatings.Core.Entities.ConglomeratRoot
 {
     public class Conglomerat
     {

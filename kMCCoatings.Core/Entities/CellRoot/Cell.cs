@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using kMCCoatings.Core.Entities.Site;
+using kMCCoatings.Core.Entities.SiteRoot;
 
-namespace kMCCoatings.Core.Entities.Cell
+namespace kMCCoatings.Core.Entities.CellRoot
 {
     public class Cell
     {
@@ -15,12 +15,12 @@ namespace kMCCoatings.Core.Entities.Cell
         /// <summary>
         /// Список всех сайтов 
         /// </summary>
-        public List<Site.Site> Sites { get; set; }
+        public List<Site> Sites { get; set; }
 
         /// <summary>
         /// Сайт, в котором находится атом
         /// </summary>
-        public Site.Site OccupiedSite { get; set; }
+        public Site OccupiedSite { get; set; }
 
         /// <summary>
         /// Состояние клетки

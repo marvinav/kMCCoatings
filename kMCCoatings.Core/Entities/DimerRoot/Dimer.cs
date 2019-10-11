@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using kMCCoatings.Core.Configuration;
+using kMCCoatings.Core.Entities.AtomRoot;
 
-namespace kMCCoatings.Core.Entities.Dimer
+namespace kMCCoatings.Core.Entities.DimerRoot
 {
     public class Dimer
     {
@@ -18,7 +19,7 @@ namespace kMCCoatings.Core.Entities.Dimer
         /// </summary>
         /// <param name="firstAtom"></param>
         /// <param name="secondAtom"></param>
-        public Dimer(Atom.Atom firstAtom, Atom.Atom secondAtom, DimerSettings dimerSettings)
+        public Dimer(Atom firstAtom, Atom secondAtom, DimerSettings dimerSettings)
         {
             
         }

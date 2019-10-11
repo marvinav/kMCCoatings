@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using kMCCoatings.Core.Entities.Site;
 
-namespace kMCCoatings.Core.Entities.Cell
+namespace kMCCoatings.Core.Entities.CellRoot
 {
     public enum CellStatus
     {

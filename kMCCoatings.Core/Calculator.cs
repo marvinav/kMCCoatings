@@ -1,7 +1,7 @@
 ﻿using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Entities;
-using kMCCoatings.Core.Entities.Atom;
-using kMCCoatings.Core.Entities.Site;
+using kMCCoatings.Core.Entities.AtomRoot;
+using kMCCoatings.Core.Entities.SiteRoot;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace kMCCoatings.Core.Entities.Deposition
+namespace kMCCoatings.Core.Entities.DepositionRoot
 {
     public class Deposition
     {

@@ -7,7 +7,6 @@ namespace kMCCoatings.Console
         static void Main(string[] args)
         {
             System.Console.WriteLine("Hello World!");
-            var asVa = new Calculator(new kMCCoatings.Core.Configuration.CalculatorSettings());
             if(args != null)
             {                
                 System.Console.WriteLine(args[0]);

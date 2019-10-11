@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using kMCCoatings.Core.Entities.SiteRoot;
 
-namespace kMCCoatings.Core.Entities.Atom
+namespace kMCCoatings.Core.Entities.AtomRoot
 {
     public class Atom
     {
@@ -14,7 +15,7 @@ namespace kMCCoatings.Core.Entities.Atom
         /// <summary>
         /// Сайт, в котором находится атом
         /// </summary>
-        public Site.Site Site { get; set; }
+        public Site Site { get; set; }
 
         /// <summary>
         /// Список всех возможных переходов для указанного атома

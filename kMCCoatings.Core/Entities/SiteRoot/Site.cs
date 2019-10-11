@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using kMCCoatings.Core.Entities.AtomRoot;
 
-namespace kMCCoatings.Core.Entities.Site
+namespace kMCCoatings.Core.Entities.SiteRoot
 {
     public class Site
     {
@@ -32,7 +33,7 @@ namespace kMCCoatings.Core.Entities.Site
         /// <summary>
         /// Атом, размещённый в сайте
         /// </summary>
-        public Atom.Atom OccupiedAtom { get; set; }
+        public Atom OccupiedAtom { get; set; }
 
         /// <summary>
         /// Список всех типов возможных атомов, который могут окупировать этот сайт
