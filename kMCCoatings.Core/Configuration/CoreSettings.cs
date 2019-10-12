@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kMCCoatings.Core.Configuration
 {
-    class CoreSettings
+    public class CoreSettings
     {
     }
 }

@@ -8,7 +8,7 @@ namespace kMCCoatings.Console
         {
             System.Console.WriteLine("Hello World!");
             if(args != null)
-            {                
+            {
                 System.Console.WriteLine(args[0]);
             }
         }
