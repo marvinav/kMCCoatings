@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using kMCCoatings.Core.Configuration;
+using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities.AtomRoot;
 
 namespace kMCCoatings.Core.Entities.DimerRoot
@@ -20,14 +21,22 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public int Id { get; set; }
 
         /// <summary>
-        /// Ориентация диммера в пространстве
+        /// Ориентация диммера в пространстве.
         /// </summary>
+        /// <remarks>
+        /// Ориентация определяется относительно направления [0,0,1] кристаллической решётки.
+        /// </remarks>
         public DimerOrientation Orientation { get; set; }
 
         /// <summary>
         /// Атомы диммера
         /// </summary>
         public List<Atom> Atoms { get; set; }
+
+        ///<summary>
+        /// Кристаллическая решётка диммера
+        ///</summary>
+        public Lattice Lattice { get; set; }
 
         /// <summary>
         /// Список трансляций в глобальных системах координат
@@ -42,7 +51,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public Dimer(Atom firstAtom, Atom secondAtom, DimerSettings dimerSettings)
         {
             // Инициализация димера            
-            //Получение порядкового номера димера и присваивание его атомам
+            // Получение порядкового номера димера и присваивание его атомам
             DimerCounter++;
             Id = DimerCounter;
             firstAtom.Site.DimerId = Id;
@@ -51,16 +60,33 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             {
                 firstAtom, secondAtom
             };
-            var dimerOrientation = GlobalCoordinates.GetRotationOfVector(firstAtom.Site.Coordinates, secondAtom.Site.Coordinates);
-            //Расчёт ориентации диммера в пространстве
-            Orientation = new DimerOrientation()
+
+            Lattice = new Lattice();
+            // Ищем подходящую решётку
+            foreach(var lattice in dimerSettings.Lattices)
             {
-                CosAlfa = dimerOrientation.Item1, 
-                CosBetta = dimerOrientation.Item2, 
-                CosGamma = dimerOrientation.Item3 
-            };
-            // Расчёт трансляций димера
-            Translations = CalculateTranslations(Orientation, dimerSettings);
+                if (lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId))
+                {
+                    Lattice = lattice;
+                    break;
+                }
+            }
+            if(Lattice.Name == "")
+            {
+                throw new Exception($"Невозможно формирование указанного диммера, так как отсутствует кристаллическая решётка {firstAtom.AtomTypeId} : {secondAtom.AtomTypeId}");
+            }
+            else
+            {
+                var dimerOrientation = GlobalCoordinates.GetRotationOfVector(firstAtom.Site.Coordinates, secondAtom.Site.Coordinates);
+                //Расчёт ориентации диммера в пространстве
+                Orientation = new DimerOrientation()
+                {
+                    CosAlfa = dimerOrientation.Item1,
+                    CosBetta = dimerOrientation.Item2
+                };
+                // Расчёт трансляций димера
+                Translations = CalculateTranslations(Orientation, dimerSettings);
+            }
         }
 
         /// <summary>

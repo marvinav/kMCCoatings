@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using kMCCoatings.Core.Constants;
 
 namespace kMCCoatings.Core.Configuration
 {
     public class DimerSettings
     {
 
+        /// <summary>
+        /// Список возможных трансляций для каждой пары атомов.
+        ///</summary>
         public Dictionary<(short, short), List<(double, double, double)>> Translations { get; set; } = new Dictionary<(short, short), List<(double, double, double)>>();
 
+        /// <summary>
+        /// Список кристаллических решёток
+        ///</summary>
+        public List<Lattice> Lattices { get; set; }
         public DimerSettings()
         {
             var key = ((short)1, (short)1);
