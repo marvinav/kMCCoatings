@@ -13,17 +13,17 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// <summary>
         /// Левая граница клетки
         /// </summary>
-        public int X { get; set; }
+        public float X { get; set; }
 
         /// <summary>
         /// Нижняя граница клетки
         /// </summary>
-        public int Y { get; set; }
+        public float Y { get; set; }
 
         /// <summary>
         /// Положение клетки на оси Z
         /// </summary>
-        public int Z { get; set; }
+        public float Z { get; set; }
 
         /// <summary>
         /// Состояние сайта

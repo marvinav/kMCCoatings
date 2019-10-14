@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace kMCCoatings.Core.Entities
@@ -46,13 +47,13 @@ namespace kMCCoatings.Core.Entities
         /// Получить вектор по двум точкам
         /// </summary>
         /// <return>Возвращает кортеж вектора</return>
-        public static (double, double, double) GetRotationOfVector(GlobalCoordinates firstCor, GlobalCoordinates secondCor)
+        public static Vector3 GetRotationOfVector(GlobalCoordinates firstCor, GlobalCoordinates secondCor)
         {
             var x = firstCor.X - secondCor.X;
             var y = firstCor.Y - secondCor.Y;
             var z = firstCor.Z - secondCor.Z;
-            var length = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2) + Math.Pow(z, 2));
-            return (x / length, y / length, z / length);
+            var length = (float)Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2) + Math.Pow(z, 2));
+            return new Vector3(x / length, y / length, z / length);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities.AtomRoot;
+using System.Linq;
 
 namespace kMCCoatings.Core.Entities.DimerRoot
 {
@@ -21,14 +22,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public int Id { get; set; }
 
         /// <summary>
-        /// Ориентация диммера в пространстве.
-        /// </summary>
-        /// <remarks>
-        /// Ориентация определяется относительно направления [0,0,1] кристаллической решётки.
-        /// </remarks>
-        public DimerOrientation Orientation { get; set; }
-
-        /// <summary>
         /// Атомы диммера
         /// </summary>
         public List<Atom> Atoms { get; set; }
@@ -39,9 +32,14 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public Lattice Lattice { get; set; }
 
         /// <summary>
+        /// Основной кристаллографический вектор в глобальных координатах
+        /// </summary>
+        public Vector3 BasicVector { get; set; }
+
+        /// <summary>
         /// Список трансляций в глобальных системах координат
         /// </summary>
-        public List<(double, double, double)> Translations { get; set; }
+        public List<Vector3> Translations { get; set; }
 
         /// <summary>
         /// Формируем димер при связывании двух атомов
@@ -60,33 +58,19 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             {
                 firstAtom, secondAtom
             };
-
-            Lattice = new Lattice();
             // Ищем подходящую решётку
-            foreach(var lattice in dimerSettings.Lattices)
-            {
-                if (lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId))
-                {
-                    Lattice = lattice;
-                    break;
-                }
-            }
-            if(Lattice.Name == "")
-            {
-                throw new Exception($"Невозможно формирование указанного диммера, так как отсутствует кристаллическая решётка {firstAtom.AtomTypeId} : {secondAtom.AtomTypeId}");
-            }
-            else
-            {
-                var dimerOrientation = GlobalCoordinates.GetRotationOfVector(firstAtom.Site.Coordinates, secondAtom.Site.Coordinates);
-                //Расчёт ориентации диммера в пространстве
-                Orientation = new DimerOrientation()
-                {
-                    CosAlfa = dimerOrientation.Item1,
-                    CosBetta = dimerOrientation.Item2
-                };
-                // Расчёт трансляций димера
-                Translations = CalculateTranslations(Orientation, dimerSettings);
-            }
+            Lattice = (from Lattice lattice in dimerSettings.Lattices
+                        where lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId)
+                        select lattice).FirstOrDefault();
+
+            // Получаем кристаллографическое направление в глобальных координатах, сформировавшееся в диммере
+            var globalVector = new Vector3(firstAtom.Site.X - secondAtom.Site.Y, firstAtom.Site.Y - secondAtom.Site.Y, firstAtom.Site.Z - firstAtom.Site.Z);
+            BasicVector = Lattice.GetBasicVectors(firstAtom.AtomTypeId, secondAtom.AtomTypeId, globalVector);
+            
+
+            // Расчёт трансляций димера
+            Translations = CalculateTranslations(BasicVector, dimerSettings);
+            
         }
 
         /// <summary>
@@ -94,10 +78,10 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// </summary>
         /// <param name="dimer"></param>
         /// <param name="dimerSettings"></param>
-        private static List<(double, double, double)> CalculateTranslations(DimerOrientation dimerOrientation, DimerSettings dimerSettings)
+        private static List<Vector3> CalculateTranslations(Vector3 basicVector, DimerSettings dimerSettings)
         {
-
-            var m1 = dimerOrientation;
+            //TODO: Получить список трансляций для димера в глобальных система координат
+            var m1 = basicVector;
             throw new NotImplementedException();
         }
     }

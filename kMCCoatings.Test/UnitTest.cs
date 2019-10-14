@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities;
@@ -25,8 +26,6 @@ namespace kMCCoatings.Test
             // TODO: Реализовать формирование списка возможных трансляций вектора доя поиска сайта
             Dimer dimer = new Dimer(firstAtomInDimer, secondAtomInDimer, DimerSettings);
             dimers.Add(dimer);
-            Assert.True(Math.Round(dimer.Orientation.CosAlfa, 3) == -0.707 
-                && Math.Round(dimer.Orientation.CosBetta,3) == -0.707);
         }
 
         [Fact]
@@ -71,16 +70,19 @@ namespace kMCCoatings.Test
                     }
                 }
             };
+
             /// Кристаллическая решётка fcc для теста
-            var crd = new Dictionary<int, List<(double, double, double)>>()
+            var crd = new Dictionary<(int, int), Vector3>()
             {
-                {0, new List<(double, double, double)>(){(0,0,0)}},
-                {1, new List<(double, double, double)>(){(0.5, 0.5, 0.5)}}
+                {(0,0), new Vector3(0, 0 ,0)},
+                {(0,1), new Vector3(0.5f, 0.5f, 0.5f)}
             };
+
             var lattice = new List<Lattice>
             {
-                new Lattice("meN", new int[] { 0, 1 }, crd)
+                new Lattice("meN", new int[] { 0, 1 }, crd, new Vector3(1, 0, 0))
             };
+            
             /// 0 - Ti, 1 - Cr, 2 - N
             lattice.First().AddElementsToLattice(0, 0);
             lattice.First().AddElementsToLattice(1, 0);

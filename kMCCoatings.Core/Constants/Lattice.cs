@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using kMCCoatings.Core.Entities;
+using kMCCoatings.Core.Extension;
 
 namespace kMCCoatings.Core.Constants
 {
@@ -19,25 +23,36 @@ namespace kMCCoatings.Core.Constants
         private int[] Atoms { get; set; }
 
         ///<summary>
-        ///Словарь координат атомов
+        ///Словарь возможных кристаллографических направлений в зависимости от пар атомов.
         ///</summary>
-        private Dictionary<int, List<(double, double, double)>> Coordinates { get; set; } = new Dictionary<int, List<(double, double, double)>>();
+        private Dictionary<(int, int), Vector3> LatticeDirections { get; set; } = new Dictionary<(int, int), Vector3>();
 
-        public Lattice(string name, int[] atoms, Dictionary<int, List<(double, double, double)>> coordinates)
+        public Vector3 BasicVector { get; set; }
+
+        /// <summary>
+        /// Создать кристаллографическую решётку соединения
+        /// </summary>
+        /// <param name="atoms">Атомы кристаллической решётки</param>
+        /// <param name="name">Название химического соединения</param>
+        /// <param name="latticeDirections">Кристаллографическое направление, формируемыми двумя парами атомов</param>
+        /// <param name="basicVector">Кристаллографическое направление, относительно которых сформирован список трансляций</param>
+        /// <remarks>
+        /// Список трансляций у basicVector - это не кристаллографические трансляция,
+        /// а векторы к атомомам, с которыми формируется связь
+        /// </remarks>
+        public Lattice(string name, int[] atoms, Dictionary<(int, int), Vector3> latticeDirections, Vector3 basicVector)
         {
             Name = name;
             Atoms = atoms;
-            Coordinates = coordinates;
-        }
-        public Lattice()
-        {
-
+            LatticeDirections = latticeDirections;
+            BasicVector = basicVector;
         }
 
+        public Lattice() { }
         ///<summary>
         ///Положение химического элемента в кристаллической решётки
         ///</summary>
-        private List<(int, int)> ElementsPosition { get; set; } = new List<(int, int)>();
+        private Dictionary<int, int> ElementsPosition { get; set; } = new Dictionary<int, int>();
 
         ///<summary>
         ///Добавить элемент в словарь кристаллической решётки
@@ -48,7 +63,7 @@ namespace kMCCoatings.Core.Constants
         {
             if (Atoms.Length >= atomTypeId)
             {
-                ElementsPosition.Add((elementId, atomTypeId));
+                ElementsPosition.Add(elementId, atomTypeId);
             }
             else
             {
@@ -63,18 +78,49 @@ namespace kMCCoatings.Core.Constants
         {
             bool firstExist = false;
             bool secondExist = false;
-            foreach(var item in ElementsPosition)
+
+            foreach(var item in ElementsPosition.Keys)
             {
                 if(!firstExist)
                 {
-                    firstExist = item.Item1 == firstElementId;
+                    firstExist = item == firstElementId;
                 }
                 if(!secondExist)
                 {
-                    secondExist = item.Item1 == secondElementId;
+                    secondExist = item == secondElementId;
                 }
             }
+
             return firstExist == true && firstExist == secondExist;
+        }
+        
+
+        ///<summary>
+        /// Возвращает вектор, соответствующий базовому кристаллографическому направлению
+        ///</summary>
+        public Vector3 GetBasicVectors(int firstElementId, int secondElementId, Vector3 vector)
+        {
+            var firstAtomType = Atoms[firstElementId];
+            var secondAtomType = Atoms[secondElementId];
+            var key = firstAtomType < secondAtomType ? (firstAtomType, secondAtomType) : (secondAtomType, firstAtomType);
+            var latticeVector = LatticeDirections[key];
+
+            if(latticeVector.Equals(BasicVector))
+            {
+                return vector;
+            }
+            else
+            {
+                var cos = BasicVector.Cosines(vector);
+                var sin = Math.Sqrt(1 - Math.Pow(cos, 2));
+                
+                return new Vector3()
+                {
+                    X = (float)(vector.X * cos - vector.Y * sin),
+                    Y = (float)(vector.X * sin - vector.Y * cos),
+                    Z = 0
+                };
+            }
         }
     }
 }
