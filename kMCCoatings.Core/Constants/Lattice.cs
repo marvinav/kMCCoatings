@@ -96,7 +96,7 @@ namespace kMCCoatings.Core.Constants
         
 
         ///<summary>
-        /// Возвращает вектор, соответствующий базовому кристаллографическому направлению
+        /// Возвращает вектор в глобальных координатах, соответствующий базовому кристаллографическому направлению
         ///</summary>
         public Vector3 GetBasicVectors(int firstElementId, int secondElementId, Vector3 vector)
         {

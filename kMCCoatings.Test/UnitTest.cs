@@ -77,7 +77,7 @@ namespace kMCCoatings.Test
                 {(0,0), new Vector3(0, 0 ,0)},
                 {(0,1), new Vector3(0.5f, 0.5f, 0.5f)}
             };
-
+            
             var lattice = new List<Lattice>
             {
                 new Lattice("meN", new int[] { 0, 1 }, crd, new Vector3(1, 0, 0))

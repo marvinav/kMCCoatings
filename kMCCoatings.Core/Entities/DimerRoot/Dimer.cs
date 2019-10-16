@@ -9,13 +9,16 @@ using System.Linq;
 
 namespace kMCCoatings.Core.Entities.DimerRoot
 {
+    /// <summary>
+    /// Зерно с определенной химической решёткой, ориентацией в пространстве и атомами.
+    /// </summary>
     public struct Dimer
     {
         /// <summary>
         /// Счётчик димеров
         /// </summary>
         public static int DimerCounter { get; set; }
-    
+
         /// <summary>
         /// Идентификатор диммера
         /// </summary>
@@ -39,7 +42,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// <summary>
         /// Список трансляций в глобальных системах координат
         /// </summary>
-        public List<Vector3> Translations { get; set; }
+        public Dictionary<int, (int, Vector3)> Translations { get; set; }
 
         /// <summary>
         /// Формируем димер при связывании двух атомов
@@ -60,19 +63,16 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             };
             // Ищем подходящую решётку
             Lattice = (from Lattice lattice in dimerSettings.Lattices
-                        where lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId)
-                        select lattice).FirstOrDefault();
+                       where lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId)
+                       select lattice).FirstOrDefault();
 
             // Получаем кристаллографическое направление в глобальных координатах, сформировавшееся в диммере
             var globalVector = new Vector3(firstAtom.Site.X - secondAtom.Site.Y, firstAtom.Site.Y - secondAtom.Site.Y, firstAtom.Site.Z - firstAtom.Site.Z);
             BasicVector = Lattice.GetBasicVectors(firstAtom.AtomTypeId, secondAtom.AtomTypeId, globalVector);
-            
 
             // Расчёт трансляций димера
             Translations = CalculateTranslations(BasicVector, dimerSettings);
-            
         }
-
         /// <summary>
         /// Расчёт трансляций диммера в глобальные системы координат
         /// </summary>
@@ -80,7 +80,13 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// <param name="dimerSettings"></param>
         private static List<Vector3> CalculateTranslations(Vector3 basicVector, DimerSettings dimerSettings)
         {
-            //TODO: Получить список трансляций для димера в глобальных система координат
+            // TODO: Получить список трансляций для димера в глобальных системах координат
+            var translations = dimerSettings.Translations; // Список  трансляций в кристаллографических координатах
+            //FIXME dasdasd
+            //BUG
+            //OPTIMIZE dsfds
+            //BECAREFUL: fd dasdasd
+            //NOTE: sdfsd
             var m1 = basicVector;
             throw new NotImplementedException();
         }

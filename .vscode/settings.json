@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": true,
+            "database": "C:\\Users\\av_ch\\ResearchDB.db",
+            "dialect": "SQLite",
+            "isActive": false,
+            "isConnected": false,
+            "name": "ResearchDb"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

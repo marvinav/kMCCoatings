@@ -63,20 +63,20 @@ namespace kMCCoatings.Core
                 foreach (var neighborCell in cell.Neighbors)
                 {
                     var nCell = Dimension.Cells[neighborCell];
-                    if(nCell.OccupiedSite == null && nCell.Sites != null) // 1
+                    if (nCell.OccupiedSite == null && nCell.Sites != null) // 1
                     {
                         // Рассчитываем переходы к сайтам
                     }
-                    else if(nCell.OccupiedSite != null) // 2
+                    else if (nCell.OccupiedSite != null) // 2
                     {
                         distanceToAtoms.Add(nCell.Coordinates, Atom.CalculateDistance(cell.OccupiedSite.OccupiedAtom, nCell.OccupiedSite.OccupiedAtom));
-                    }                    
+                    }
                 }
-                if(distanceToAtoms != null)
+                if (distanceToAtoms != null)
                 {
                     // Формируем димер с атомом с наименьшим расстоянием, рассчитываем сайты и переходы
                 }
-                else if(cell.OccupiedSite.OccupiedAtom.Transitions == null) // 3
+                else if (cell.OccupiedSite.OccupiedAtom.Transitions == null) // 3
                 {
                     // Рассчитываем переходы по подложке
                 }
@@ -101,7 +101,7 @@ namespace kMCCoatings.Core
         {
             var transtions = new List<Transition>();
 
-            if(occupiedSite.OccupiedAtom != null)
+            if (occupiedSite.OccupiedAtom != null)
             {
 
             }

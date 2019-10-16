@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using kMCCoatings.Core.Constants;
 
@@ -9,9 +10,9 @@ namespace kMCCoatings.Core.Configuration
     {
 
         /// <summary>
-        /// Список возможных трансляций для каждой пары атомов.
+        /// Список возможных трансляций для каждой пары атомов определённой кристаллической решётки. ГЦК
         ///</summary>
-        public Dictionary<(short, short), List<(double, double, double)>> Translations { get; set; } = new Dictionary<(short, short), List<(double, double, double)>>();
+        public Dictionary<int, (int, List<Vector3>)> Translations { get; set; } = new Dictionary<int, (int, List<Vector3>)>();
 
         /// <summary>
         /// Список кристаллических решёток
@@ -19,40 +20,39 @@ namespace kMCCoatings.Core.Configuration
         public List<Lattice> Lattices { get; set; }
         public DimerSettings()
         {
-            var key = ((short)1, (short)1);
-            var length = 2.0 * Math.Sqrt(2.0);
+            var length = 2.0f * (float)Math.Sqrt(2.0);
             // Ti - Ti (Ti - Cr, Cr - Cr) in fcc
-            var translations = new List<(double, double, double)>()
+            var translations = new List<Vector3>()
             {
-                (-length, 0, 0),
-                (length, 0, 0),
-                (0, length, 0),
-                (0, -length, 0),
-                (0, 0, length),
-                (0, 0, -length)
+                new Vector3(length, 0, 0),
+                new Vector3(-length, 0, 0),
+                new Vector3(0, length, 0),
+                new Vector3(0, -length, 0),
+                new Vector3(0, 0, length),
+                new Vector3(0, 0, -length)
             };
-            Translations.Add(key, translations);
-            // Ti - N in fcc
-            key = (1, 2);
-            translations = new List<(double, double, double)>()
-            {
-                (-1, -1, 0),
-                (-1, 1, 0),
-                (1, 1, 0),
-                (1, -1, 0),
-                (0, -1, -1),
-                (0, -1, 1),
-                (0, 1, -1),
-                (0, 1, 1),
-                (-1, 0, -1),
-                (-1, 0, 1),
-                (1, 0, -1),
-                (1, 0, 1)
-            };            
-            // N - N interaction not now
 
-            Translations.Add(key, translations);
+            Translations.Add(0, (0, translations));
+
+            // Ti - N in fcc            
+            var translationOfTiN = new List<Vector3>()
+            {
+                new Vector3(-1, -1, 0),
+                new Vector3(-1, 1, 0),
+                new Vector3(1, 1, 0),
+                new Vector3(1, -1, 0),
+                new Vector3(0, -1, -1),
+                new Vector3(0, -1, 1),
+                new Vector3(0, 1, -1),
+                new Vector3(0, 1, 1),
+                new Vector3(-1, 0, -1),
+                new Vector3(-1, 0, 1),
+                new Vector3(1, 0, -1),
+                new Vector3(1, 0, 1)
+            };
+            // NOTE: N - N interaction not now
+            Translations.Add(0, (1, translationOfTiN));
 
         }
-}
+    }
 }
