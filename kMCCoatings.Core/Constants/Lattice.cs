@@ -79,13 +79,13 @@ namespace kMCCoatings.Core.Constants
             bool firstExist = false;
             bool secondExist = false;
 
-            foreach(var item in ElementsPosition.Keys)
+            foreach (var item in ElementsPosition.Keys)
             {
-                if(!firstExist)
+                if (!firstExist)
                 {
                     firstExist = item == firstElementId;
                 }
-                if(!secondExist)
+                if (!secondExist)
                 {
                     secondExist = item == secondElementId;
                 }
@@ -93,7 +93,7 @@ namespace kMCCoatings.Core.Constants
 
             return firstExist == true && firstExist == secondExist;
         }
-        
+
 
         ///<summary>
         /// Возвращает вектор в глобальных координатах, соответствующий базовому кристаллографическому направлению
@@ -105,19 +105,19 @@ namespace kMCCoatings.Core.Constants
             var key = firstAtomType < secondAtomType ? (firstAtomType, secondAtomType) : (secondAtomType, firstAtomType);
             var latticeVector = LatticeDirections[key];
 
-            if(latticeVector.Equals(BasicVector))
+            if (latticeVector.Equals(BasicVector))
             {
                 return vector;
             }
             else
             {
                 var cos = BasicVector.Cosines(vector);
-                var sin = Math.Sqrt(1 - Math.Pow(cos, 2));
-                
+                var sin = (float)Math.Sqrt(1 - Math.Pow(cos, 2));
+
                 return new Vector3()
                 {
-                    X = (float)(vector.X * cos - vector.Y * sin),
-                    Y = (float)(vector.X * sin - vector.Y * cos),
+                    X = (vector.X * cos - vector.Y * sin),
+                    Y = (vector.X * sin - vector.Y * cos),
                     Z = 0
                 };
             }

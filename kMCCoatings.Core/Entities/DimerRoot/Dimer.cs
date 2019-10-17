@@ -71,7 +71,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             BasicVector = Lattice.GetBasicVectors(firstAtom.AtomTypeId, secondAtom.AtomTypeId, globalVector);
 
             // Расчёт трансляций димера
-            Translations = CalculateTranslations(BasicVector, dimerSettings);
+            Translations = null;
         }
         /// <summary>
         /// Расчёт трансляций диммера в глобальные системы координат
@@ -82,11 +82,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         {
             // TODO: Получить список трансляций для димера в глобальных системах координат
             var translations = dimerSettings.Translations; // Список  трансляций в кристаллографических координатах
-            //FIXME dasdasd
-            //BUG
-            //OPTIMIZE dsfds
-            //BECAREFUL: fd dasdasd
-            //NOTE: sdfsd
             var m1 = basicVector;
             throw new NotImplementedException();
         }
