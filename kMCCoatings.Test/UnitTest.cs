@@ -9,6 +9,8 @@ using kMCCoatings.Core.Entities.AtomRoot;
 using kMCCoatings.Core.Entities.DimerRoot;
 using kMCCoatings.Core.Entities.SiteRoot;
 using kMCCoatings.Core.Extension;
+using MathNet.Spatial.Euclidean;
+using MathNet.Spatial.Units;
 using Xunit;
 
 namespace kMCCoatings.Test
@@ -61,6 +63,30 @@ namespace kMCCoatings.Test
             Assert.True(resultedVectors.FirstOrDefault(x => Math.Round(x.Length(), 4) != length) == default);
             // Ti - N in fcc     
         }
+
+        /// <summary>
+        /// Проверка формирования списка транслиций
+        /// </summary>
+        [Fact]
+        public void CreateVectorFromMath()
+        {
+
+            CoordinateSystem cs = new CoordinateSystem();
+            Vector3D vect = new Vector3D(2, 3, 1);
+            var rotationVect = new Vector3D(1, -1, 1);
+            var a = Angle.FromDegrees(355);
+
+            var resultedVector = vect.Rotate(rotationVect, a);
+            Console.WriteLine(resultedVector.ToString());
+            Assert.True(false);
+        }
+
+
+
+
+
+
+
 
 
     }
@@ -120,6 +146,7 @@ namespace kMCCoatings.Test
 
             DimerSettings.Lattices = lattice;
         }
+
 
     }
 }

@@ -8,62 +8,84 @@ namespace kMCCoatings.Core.Configuration
 {
     public class DimerSettings
     {
-
-        /// <summary>
-        /// Список возможных трансляций для каждой пары атомов определённой кристаллической решётки. ГЦК
-        ///</summary>
-        public Dictionary<int, (int, List<Vector3>)> Translations { get; set; } = new Dictionary<int, (int, List<Vector3>)>();
-
-        public Dictionary<int, (int, List<float>)> TranslationAngel { get; set; } = new Dictionary<int, (int, List<float>)>();
-
         /// <summary>
         /// Список кристаллических решёток
         ///</summary>
         public List<Lattice> Lattices { get; set; }
+
+
         public DimerSettings()
         {
-            var length = 3.0f;
 
-            Vector3 basicVector = new Vector3(1, 0, 0);
+        }
 
-            // Ti - Ti (Ti - Cr, Cr - Cr) in fcc
-            var translations = new List<Vector3>()
+        /// <summary>
+        /// Углы между базовым вектором и атомами в связи Me-Me
+        /// </summary>
+        public static List<(double, double)> AnglesOfMeMeBondInFCC()
+        {
+            return new List<(double, double)>
             {
-                new Vector3(length, 0, 0),
-                new Vector3(-length, 0, 0),
-                new Vector3(0, length, 0),
-                new Vector3(0, -length, 0),
-                new Vector3(0, 0, length),
-                new Vector3(0, 0, -length)
+                (0, 0),
+                (90, 0),
+                (180, 0),
+                (270, 0),
+                (0, 90),
+                (0, -90)
             };
-            // косинус угла между трансляционными векторами и базовым
-            var angles = new List<float>();
-
-            foreach (var vec in translations)
+        }
+        /// <summary>
+        /// Угле между базовыми векторами и атомами в связи Me - N
+        /// </summary>
+        public static List<(double, double)> AngelsOfMeNBondInFCC()
+        {
+            return new List<(double, double)>
             {
-                angles.Add(basicVector.Cosines(vec));
-            }
-            Translations.Add(0, (0, translations));
-
-            // Ti - N in fcc            
-            var translationOfTiN = new List<Vector3>()
-            {
-                new Vector3(-1, -1, 0),
-                new Vector3(-1, 1, 0),
-                new Vector3(1, 1, 0),
-                new Vector3(1, -1, 0),
-                new Vector3(0, -1, -1),
-                new Vector3(0, -1, 1),
-                new Vector3(0, 1, -1),
-                new Vector3(0, 1, 1),
-                new Vector3(-1, 0, -1),
-                new Vector3(-1, 0, 1),
-                new Vector3(1, 0, -1),
-                new Vector3(1, 0, 1)
+                (45,0),
+                (135,0),
+                (225, 0),
+                (315,0),
+                (0,45),
+                (0, -45),
+                (90, 45),
+                (90, -45),
+                (180, 45),
+                (180, -45),
+                (270, 45),
+                (270, -45)
             };
-            // NOTE: N - N interaction not now
-            // Translations.Add(0, (1, translationOfTiN));
+        }
 
+        /// <summary>
+        /// Угле между базовыми векторами и атомами в связи N - Me
+        /// </summary>
+        public static List<(double, double)> AngelsOfNMeBondInFCC()
+        {
+            return new List<(double, double)>
+            {
+                (45,0),
+                (135,0),
+                (225, 0),
+                (315,0)
+            };
+        }
+
+        /// <summary>
+        /// Угле между базовыми векторами и атомами в связи N - N
+        /// </summary>
+        public static List<(double, double)> AngelsOfNNBondInFCC()
+        {
+            return new List<(double, double)>
+            {
+                (0,45),
+                (0,-45),
+                (90, 45),
+                (90, -45),
+                (180, 45),
+                (180, -45),
+                (270, 45),
+                (270,-45)
+            };
         }
     }
 }

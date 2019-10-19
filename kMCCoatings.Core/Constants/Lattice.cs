@@ -12,6 +12,7 @@ namespace kMCCoatings.Core.Constants
     ///</summary>
     public class Lattice
     {
+        #region Свойства
         ///<summary>
         ///Имя кристаллической решётки
         ///</summary>
@@ -27,7 +28,14 @@ namespace kMCCoatings.Core.Constants
         ///</summary>
         private Dictionary<(int, int), Vector3> LatticeDirections { get; set; } = new Dictionary<(int, int), Vector3>();
 
+        /// <summary>
+        /// Базовый вектор кристаллографическое решётки
+        /// </summary>
         public Vector3 BasicVector { get; set; }
+
+        public Dictionary<int, List<(double, double)>[]> afdsaf { get; set; }
+
+        #endregion Свойства
 
         /// <summary>
         /// Создать кристаллографическую решётку соединения
@@ -44,8 +52,8 @@ namespace kMCCoatings.Core.Constants
         {
             Name = name;
             Atoms = atoms;
-            LatticeDirections = latticeDirections;
             BasicVector = basicVector;
+            LatticeDirections = latticeDirections;
         }
 
         public Lattice() { }

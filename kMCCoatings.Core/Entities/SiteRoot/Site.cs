@@ -43,7 +43,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// <summary>
         /// Идентификатор Id диммера, к которому относится атом
         /// </summary>
-        public int DimerId { get; set; }
+        public int BoundedAtomsCounter { get; set; }
 
     }
 }

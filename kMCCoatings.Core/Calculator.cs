@@ -32,14 +32,6 @@ namespace kMCCoatings.Core
         }
 
 
-        /// <summary>
-        /// Найти возможные сайты для атома
-        /// </summary>
-        /// <param name="atom"></param>
-        public void FindPossibleSitesForAtom(Atom atom)
-        {
-
-        }
 
         /// <summary>
         /// 

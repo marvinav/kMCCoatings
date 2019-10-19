@@ -49,14 +49,15 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// </summary>
         /// <param name="firstAtom"></param>
         /// <param name="secondAtom"></param>
+
         public Dimer(Atom firstAtom, Atom secondAtom, DimerSettings dimerSettings)
         {
             // Инициализация димера            
             // Получение порядкового номера димера и присваивание его атомам
             DimerCounter++;
             Id = DimerCounter;
-            firstAtom.Site.DimerId = Id;
-            secondAtom.Site.DimerId = Id;
+            firstAtom.Site.BoundedAtomsCounter = Id;
+            secondAtom.Site.BoundedAtomsCounter = Id;
             Atoms = new List<Atom>()
             {
                 firstAtom, secondAtom
@@ -81,7 +82,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         private static List<Vector3> CalculateTranslations(Vector3 basicVector, DimerSettings dimerSettings)
         {
             // TODO: Получить список трансляций для димера в глобальных системах координат
-            var translations = dimerSettings.Translations; // Список  трансляций в кристаллографических координатах
+            //var translations = dimerSettings.Translations; // Список  трансляций в кристаллографических координатах
             var m1 = basicVector;
             throw new NotImplementedException();
         }
