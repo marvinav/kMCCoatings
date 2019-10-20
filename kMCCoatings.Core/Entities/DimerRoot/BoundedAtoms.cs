@@ -1,7 +1,7 @@
 using System.Linq;
 using kMCCoatings.Core.Configuration;
-using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities.AtomRoot;
+using kMCCoatings.Core.LatticeRoot;
 
 namespace kMCCoatings.Core.Entities.DimerRoot
 {
@@ -30,7 +30,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             };
             // Ищем подходящую решётку
             Lattice = (from Lattice lattice in dimerSettings.Lattices
-                       where lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId)
+                       where lattice.IsContains(firstAtom.ElementId, secondAtom.ElementId)
                        select lattice).FirstOrDefault();
         }
     }

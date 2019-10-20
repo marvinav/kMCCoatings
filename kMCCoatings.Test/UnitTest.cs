@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using kMCCoatings.Core.Configuration;
-using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
 using kMCCoatings.Core.Entities.DimerRoot;
 using kMCCoatings.Core.Entities.SiteRoot;
 using kMCCoatings.Core.Extension;
+using kMCCoatings.Core.LatticeRoot;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Xunit;
@@ -18,9 +19,17 @@ namespace kMCCoatings.Test
     public class UnitTest : Test
     {
         [Fact]
-        public void FirstTest()
+        public void LatticeFromJSON()
         {
-            Assert.True(true);
+            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            using (var fs = new FileStream(path, FileMode.Open))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    var fileContent = sr.ReadToEnd();
+                    var result = DimerSettings.GetLatticeFromJson(fileContent);
+                }
+            }
         }
 
         [Fact]
@@ -32,35 +41,19 @@ namespace kMCCoatings.Test
         }
 
         [Fact]
-        public void TestVector3Extension()
+        public void IsContains()
         {
-            //TODO: Реализовать поиск возможных сайтов для диммера             
-            Vector3 basicVector = new Vector3(1, 0, 0);
-            Vector3 globalBasicVector = new Vector3(2, 2, 0);
-            var length = Math.Round(globalBasicVector.Length(), 4);
-            // Ti - Ti (Ti - Cr, Cr - Cr) in fcc
-            var schemes = new List<(double, double)>()
-            {
-                (0, 0),
-                (90, 0),
-                (180, 0),
-                (270, 0),
-                (0, 90),
-                (0, -90),
-                (45, 0),
-                (135, 0),
-                (225, 0),
-                (315, 0),
-                (0, 45),
-                (90, 45),
-                (180, 45),
-                (270, 45)
-            };
-            var resultedVectors = globalBasicVector.RotatesInXYPlane(schemes);
-            var printableResult = Newtonsoft.Json.JsonConvert.SerializeObject(resultedVectors);
-            Console.Write(printableResult);
-            // Если хоть один вектор длинной отличается, значит ошибка
-            Assert.True(resultedVectors.FirstOrDefault(x => Math.Round(x.Length(), 4) != length) == default);
+            var lattice = DimerSettings.Lattices.First();
+            Assert.True(lattice.IsContains(firstAtomInDimer.ElementId, secondAtomInDimer.ElementId));
+            Assert.True(lattice.IsContains(22, 22));
+            Assert.True(lattice.IsContains(22, 24));
+            Assert.True(lattice.IsContains(24, 22));
+            Assert.True(lattice.IsContains(24, 24));
+            Assert.True(lattice.IsContains(24, 7));
+            Assert.True(lattice.IsContains(22, 7));
+            Assert.True(lattice.IsContains(7, 22));
+            Assert.True(lattice.IsContains(7, 24));
+            Assert.False(lattice.IsContains(2, 45));
             // Ti - N in fcc     
         }
 
@@ -80,15 +73,6 @@ namespace kMCCoatings.Test
             Console.WriteLine(resultedVector.ToString());
             Assert.True(false);
         }
-
-
-
-
-
-
-
-
-
     }
 
     public class Test
@@ -102,7 +86,7 @@ namespace kMCCoatings.Test
         {
             firstAtomInDimer = new Atom()
             {
-                AtomTypeId = 1,
+                ElementId = 7,
                 Site = new Site()
                 {
                     Coordinates = new GlobalCoordinates()
@@ -115,7 +99,7 @@ namespace kMCCoatings.Test
             };
             secondAtomInDimer = new Atom()
             {
-                AtomTypeId = 2,
+                ElementId = 22,
                 Site = new Site()
                 {
                     Coordinates = new GlobalCoordinates()
@@ -127,26 +111,15 @@ namespace kMCCoatings.Test
                 }
             };
 
-            /// Кристаллическая решётка fcc для теста
-            var crd = new Dictionary<(int, int), Vector3>()
+            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            using (var fs = new FileStream(path, FileMode.Open))
             {
-                {(0,0), new Vector3(0, 0 ,0)},
-                {(0,1), new Vector3(0.5f, 0.5f, 0.5f)}
-            };
-
-            var lattice = new List<Lattice>
-            {
-                new Lattice("meN", new int[] { 0, 1 }, crd, new Vector3(1, 0, 0))
-            };
-
-            /// 0 - Ti, 1 - Cr, 2 - N
-            lattice.First().AddElementsToLattice(0, 0);
-            lattice.First().AddElementsToLattice(1, 0);
-            lattice.First().AddElementsToLattice(2, 1);
-
-            DimerSettings.Lattices = lattice;
+                using (var sr = new StreamReader(fs))
+                {
+                    var fileContent = sr.ReadToEnd();
+                    DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
+                }
+            }
         }
-
-
     }
 }

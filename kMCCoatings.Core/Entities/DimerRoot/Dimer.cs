@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using kMCCoatings.Core.Configuration;
-using kMCCoatings.Core.Constants;
 using kMCCoatings.Core.Entities.AtomRoot;
 using System.Linq;
+using kMCCoatings.Core.LatticeRoot;
 
 namespace kMCCoatings.Core.Entities.DimerRoot
 {
@@ -35,11 +35,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public Lattice Lattice { get; set; }
 
         /// <summary>
-        /// Основной кристаллографический вектор в глобальных координатах
-        /// </summary>
-        public Vector3 BasicVector { get; set; }
-
-        /// <summary>
         /// Список трансляций в глобальных системах координат
         /// </summary>
         public Dictionary<int, (int, Vector3)> Translations { get; set; }
@@ -64,12 +59,11 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             };
             // Ищем подходящую решётку
             Lattice = (from Lattice lattice in dimerSettings.Lattices
-                       where lattice.IsContains(firstAtom.AtomTypeId, secondAtom.AtomTypeId)
+                       where lattice.IsContains(firstAtom.ElementId, secondAtom.ElementId)
                        select lattice).FirstOrDefault();
 
             // Получаем кристаллографическое направление в глобальных координатах, сформировавшееся в диммере
             var globalVector = new Vector3(firstAtom.Site.X - secondAtom.Site.Y, firstAtom.Site.Y - secondAtom.Site.Y, firstAtom.Site.Z - firstAtom.Site.Z);
-            BasicVector = Lattice.GetBasicVectors(firstAtom.AtomTypeId, secondAtom.AtomTypeId, globalVector);
 
             // Расчёт трансляций димера
             Translations = null;

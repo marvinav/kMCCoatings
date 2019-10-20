@@ -1,0 +1,124 @@
+{
+    "lattices": [
+        {
+            "name": "TiCrN",
+            "numberOfAtoms": 2,
+            "elementsPosition": [
+                {
+                    "atomId": 1,
+                    "elements": [
+                        22,
+                        24
+                    ]
+                },
+                {
+                    "atomId": 2,
+                    "elements": [
+                        7
+                    ]
+                }
+            ],
+            "atomsRelations": [
+                {
+                    "firstAtomId": 1,
+                    "secondAtomId": 1,
+                    "direction": "1 0 0"
+                },
+                {
+                    "firstAtomId": 1,
+                    "secondAtomId": 2,
+                    "direction": "0.5 0.5 0"
+                }
+            ],
+            "dimerRules": [
+                {
+                    "boundedAtoms": [
+                        1,
+                        1
+                    ],
+                    "incomingAtom": 2,
+                    "angel": 45
+                },
+                {
+                    "boundedAtoms": [
+                        1,
+                        1
+                    ],
+                    "incomingAtom": 1,
+                    "angel": 90
+                },
+                {
+                    "boundedAtoms": [
+                        1,
+                        2
+                    ],
+                    "incomingAtom": 1,
+                    "angel": 45
+                },
+                {
+                    "boundedAtoms": [
+                        1,
+                        2
+                    ],
+                    "incomingAtom": 2,
+                    "angel": 90
+                }
+            ],
+            "translationRules": [
+                {
+                    "atomId": 1,
+                    "boundedAtomId": 1,
+                    "rules": [
+                        {
+                            "turn": "1 0 0",
+                            "around": "0 0 1",
+                            "angle": 90
+                        },
+                        {
+                            "turn": "0 0 1",
+                            "around": "1 0 0",
+                            "angle": 180
+                        }
+                    ]
+                },
+                {
+                    "atomId": 1,
+                    "boundedAtomId": 2,
+                    "rules": [
+                        {
+                            "turn": "0.5 0.5 0",
+                            "around": "0 0 1",
+                            "angle": 90
+                        },
+                        {
+                            "turn": "0 0.5 0.5",
+                            "around": "1 0 0",
+                            "angle": 90
+                        },
+                        {
+                            "turn": "0.5 0 0.5",
+                            "around": "0 1 0",
+                            "angle": 90
+                        }
+                    ]
+                },
+                {
+                    "atomId": 2,
+                    "boundedAtomId": 2,
+                    "rules": [
+                        {
+                            "turn": "0.5 0 0.5",
+                            "around": "0 0 1",
+                            "angle": 90
+                        },
+                        {
+                            "turn": "0.5 0 -0.5",
+                            "around": "0 0 1",
+                            "angle": 90
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

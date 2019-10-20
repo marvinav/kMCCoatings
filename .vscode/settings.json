@@ -9,5 +9,9 @@
             "name": "ResearchDb"
         }
     ],
-    "sqltools.useNodeRuntime": true
+    "sqltools.useNodeRuntime": true,
+    "cSpell.words": [
+        "бимеров",
+        "димерный"
+    ]
 }

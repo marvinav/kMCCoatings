@@ -10,7 +10,7 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// <summary>
         /// Тип атома
         /// </summary>
-        public int AtomTypeId { get; set; }
+        public int ElementId { get; set; }
 
         /// <summary>
         /// Сайт, в котором находится атом
