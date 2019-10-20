@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
+using kMCCoatings.Core.Entities.AtomRoot;
+using kMCCoatings.Core.Entities.DimerRoot;
 using kMCCoatings.Core.Extension;
 using kMCCoatings.Core.LatticeRoot;
 using Newtonsoft.Json;
@@ -16,12 +19,30 @@ namespace kMCCoatings.Core.Configuration
         ///</summary>
         public Lattice[] Lattices { get; set; }
 
-        public DimerSettings()
-        {
 
+
+
+        /// <summary>
+        /// Создает связь между атомами, если это разрешено
+        /// </summary>
+        public BoundedAtoms CreateBoundedAtoms(Atom fAtom, Atom sAtom)
+        {
+            BoundedAtoms result = null;
+            // Ищем подходящую решётку
+            for (int i = 0; i < Lattices.Length; i++)
+            {
+                if (Lattices[i].IsContains(fAtom.ElementId, sAtom.ElementId))
+                {
+                    result = new BoundedAtoms(fAtom, sAtom, Lattices[i]);
+                    break;
+                }
+            }
+            return result;
         }
 
 
+
+        #region Инфраструктура
         public static Lattice[] GetLatticeFromJson(string json) => JsonConvert.DeserializeObject<DimerSettings>(json, GetJsonConvert()).Lattices;
 
         public static JsonSerializerSettings GetJsonConvert()
@@ -35,5 +56,6 @@ namespace kMCCoatings.Core.Configuration
                 ContractResolver = contractResolver
             };
         }
+        #endregion Инфраструктура
     }
 }

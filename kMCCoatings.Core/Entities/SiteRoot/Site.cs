@@ -31,6 +31,11 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public SiteStatus SiteStatus { get; set; }
 
         /// <summary>
+        /// Состояние сайта
+        /// </summary>
+        public SiteType SiteType { get; set; }
+
+        /// <summary>
         /// Атом, размещённый в сайте
         /// </summary>
         public Atom OccupiedAtom { get; set; }
@@ -40,10 +45,6 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// </summary>
         public int[] AtomTypeIds { get; set; }
 
-        /// <summary>
-        /// Идентификатор Id диммера, к которому относится атом
-        /// </summary>
-        public int BoundedAtomsCounter { get; set; }
 
     }
 }

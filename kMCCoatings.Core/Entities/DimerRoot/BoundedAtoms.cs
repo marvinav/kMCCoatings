@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Entities.AtomRoot;
@@ -10,6 +11,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
     /// </summary>
     public class BoundedAtoms
     {
+        public int BoundedAtomsNumber;
         public Lattice Lattice { get; set; }
 
         public Atom[] Atoms { get; set; }
@@ -17,21 +19,33 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         public static int BoundedAtomsCounter = 0;
 
         /// <summary>
-        /// Формирирование связи
+        /// Формирирование связи двух атомов
         /// </summary>
-        public BoundedAtoms(Atom firstAtom, Atom secondAtom, DimerSettings dimerSettings)
+        public BoundedAtoms(Atom firstAtom, Atom secondAtom, Lattice lattice)
         {
+            BoundedAtomsNumber = BoundedAtomsCounter;
             BoundedAtomsCounter++;
-            firstAtom.Site.BoundedAtomsCounter = BoundedAtomsCounter;
-            secondAtom.Site.BoundedAtomsCounter = BoundedAtomsCounter;
             Atoms = new Atom[2]
             {
                 firstAtom, secondAtom
             };
-            // Ищем подходящую решётку
-            Lattice = (from Lattice lattice in dimerSettings.Lattices
-                       where lattice.IsContains(firstAtom.ElementId, secondAtom.ElementId)
-                       select lattice).FirstOrDefault();
+            Lattice = lattice;
+        }
+
+        public List<Transition> CalculateTransitions()
+        {
+            //TODO: Рассчитать переход и учесть адгезию с близлежайщими атомами
+            return new List<Transition>()
+            {
+                new Transition()
+                {
+                    Atom = Atoms[0],
+                    TargetSite = new SiteRoot.Site()
+                    {
+                        SiteType = SiteRoot.SiteType.Free
+                    }
+                }
+            };
         }
     }
 }

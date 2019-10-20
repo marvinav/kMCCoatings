@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using kMCCoatings.Core.Entities.DimerRoot;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Newtonsoft.Json;
@@ -23,6 +24,11 @@ namespace kMCCoatings.Core.LatticeRoot
         /// Положение хим.элементов решётки
         /// </summary>
         public ElementsPosition[] ElementsPosition { get; set; }
+
+        /// <summary>
+        /// Энергия связи хим.эл-ов
+        /// </summary>
+        public ElementsEnergy[] ElementsEnergies { get; set; }
         /// <summary>
         /// Взаимное расположение атомов в решётки
         /// </summary>

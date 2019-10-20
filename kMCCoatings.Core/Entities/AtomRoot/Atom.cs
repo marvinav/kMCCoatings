@@ -7,6 +7,13 @@ namespace kMCCoatings.Core.Entities.AtomRoot
 {
     public class Atom
     {
+
+        /// <summary>
+        /// Номер атома в вычислениях
+        /// </summary>
+        public int AtomNumber { get; set; }
+
+        public static int AtomCounter { get; set; } = 0;
         /// <summary>
         /// Тип атома
         /// </summary>
@@ -27,6 +34,7 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// </summary>
         public static void CalculateTransitions(Atom atom)
         {
+
         }
 
         public static int CalculateDistance(Atom first, Atom second)
@@ -34,6 +42,12 @@ namespace kMCCoatings.Core.Entities.AtomRoot
             return (int)Math.Sqrt(Math.Pow(first.Site.Coordinates.X - second.Site.Coordinates.X, 2.0) +
                 Math.Pow(first.Site.Coordinates.Y - second.Site.Coordinates.Y, 2.0) +
                 Math.Pow(first.Site.Coordinates.Z - second.Site.Coordinates.Z, 2.0));
+        }
+
+        public Atom()
+        {
+            AtomNumber = AtomCounter;
+            AtomCounter++;
         }
     }
 }

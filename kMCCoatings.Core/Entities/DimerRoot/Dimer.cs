@@ -51,8 +51,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             // Получение порядкового номера димера и присваивание его атомам
             DimerCounter++;
             Id = DimerCounter;
-            firstAtom.Site.BoundedAtomsCounter = Id;
-            secondAtom.Site.BoundedAtomsCounter = Id;
             Atoms = new List<Atom>()
             {
                 firstAtom, secondAtom
