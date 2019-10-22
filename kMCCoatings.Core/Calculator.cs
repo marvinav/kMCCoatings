@@ -2,6 +2,7 @@
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
 using kMCCoatings.Core.Entities.SiteRoot;
+using MathNet.Spatial.Euclidean;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,96 +14,90 @@ namespace kMCCoatings.Core
 {
     public class Calculator
     {
-        /// <summary>
-        /// Пространство интеграции
-        /// </summary>
-        public static Dimension Dimension { get; set; }
 
         /// <summary>
         /// Общее время интегрирования
         /// </summary>
         public double CalculationTime { get; set; }
 
+        /// <summary>
+        /// Пространство расчётов
+        /// </summary>
+        public Point3D Dimension { get; set; }
 
-        public ConcurrentDictionary<int, ConcurrentBag<Transition>> Transitions { get; set; }
+        /// <summary>
+        /// Список всех атомов покрытия
+        /// </summary>
+        public List<Atom> Atoms { get; set; }
 
+        /// <summary>
+        /// Список атомов, чьи энергии необходимо пересчитать
+        /// </summary>
+        public List<Atom> AffectedAtoms { get; set; }
+
+        /// <summary>
+        /// Список переходов, которые будут осуществляться в этой иттерации.
+        /// </summary>        
+        public List<Transition> Transitions { get; set; }
+
+        /// <summary>
+        /// Список возможных сайтов
+        /// </summary>
+        public List<Site> Sites { get; set; }
+
+        public DimerSettings DimerSettings { get; set; }
+
+        public double CrossRadius { get; set; }
         public Calculator(CalculatorSettings calculatorSettings)
         {
-            Dimension = new Dimension(calculatorSettings.Lx, calculatorSettings.Ly, calculatorSettings.Lz);
+            CrossRadius = calculatorSettings.CrossRadius;
         }
 
-
+        public void AddAtoms(IEnumerable<Atom> atoms)
+        {
+            Atoms.AddRange(atoms);
+            AffectedAtoms = Atoms;
+        }
 
         /// <summary>
-        /// 
+        /// Обновляем состоянием атомов
         /// </summary>
-        /// <remarks>
-        /// 1 Смотрим, что атом не формирует димер с другим атомом. Проверка выполняются по поиску сайтов в незанятых клетках.
-        /// 2 Если димеров нет, то смотрим наличие атомов в соседних клетках и формируем новый димер, при наличие хотя бы одного с наименьшим расстоянием.
-        /// 3 Если в соседних клетках нет атомов, то добавляем переход - свободная диффузия по подложке.
-        /// </remarks>
-        public void FirstDiffusionAfterDeposition()
+        public void UpdateAtomsState()
         {
-            Parallel.ForEach(Transitions, trans =>
+            Parallel.ForEach(AffectedAtoms, afAtoms =>
             {
-
+                afAtoms.Neigborhoods = Atoms.Where(at => at.CalculateDistance(afAtoms) <= CrossRadius).ToList();
+                afAtoms.Site = new Site()
+                {
+                    Coordinates = afAtoms.Coordinate,
+                    OccupiedAtom = afAtoms,
+                    SiteStatus = SiteStatus.Occupied
+                };
             });
-            // Перебираем каждый атом после первого напыления
-            foreach (var cell in Dimension.Cells.Values.Where(c => c.OccupiedSite != null))
-            {
-                var distanceToAtoms = new Dictionary<GlobalCoordinates, double>();
-
-                foreach (var neighborCell in cell.Neighbors)
-                {
-                    var nCell = Dimension.Cells[neighborCell];
-                    if (nCell.OccupiedSite == null && nCell.Sites != null) // 1
-                    {
-                        // Рассчитываем переходы к сайтам
-                    }
-                    else if (nCell.OccupiedSite != null) // 2
-                    {
-                        distanceToAtoms.Add(nCell.Coordinates, Atom.CalculateDistance(cell.OccupiedSite.OccupiedAtom, nCell.OccupiedSite.OccupiedAtom));
-                    }
-                }
-                if (distanceToAtoms != null)
-                {
-                    // Формируем димер с атомом с наименьшим расстоянием, рассчитываем сайты и переходы
-                }
-                else if (cell.OccupiedSite.OccupiedAtom.Transitions == null) // 3
-                {
-                    // Рассчитываем переходы по подложке
-                }
-            }
         }
 
         /// <summary>
-        /// Осуществляем переход
+        /// Начать процесс интеграции
         /// </summary>
-        public void MakeTransition()
+        public void Start()
         {
 
         }
 
         /// <summary>
-        /// Рассчитать переходы
+        /// П
         /// </summary>
-        /// <param name="occupiedSite"></param>
-        /// <param name="sites"></param>
-        /// <returns></returns>
-        public List<Transition> CalculateTransitions(Site occupiedSite, List<Site> sites)
+        public void ScanCrossField(Atom affectedAtom)
         {
+            var energy = affectedAtom.Site.EnergyInSite(affectedAtom.Element.Id);
             var transtions = new List<Transition>();
-
-            if (occupiedSite.OccupiedAtom != null)
+            Parallel.ForEach(Sites, (Action<Site>)(site =>
             {
-
-            }
-            else
-            {
-                throw new Exception("Рассчёт перехода невозможен для сайта без атома.");
-            }
-            return transtions;
+                if (site.AtomTypeIds.Contains(affectedAtom.Element.Id) && site.SiteStatus == SiteStatus.Vacanted)
+                {
+                    transtions.Add(new Transition(affectedAtom, site, (double)(site.Energies[affectedAtom.Element.Id] - energy)));
+                }
+            }));
         }
-
     }
 }

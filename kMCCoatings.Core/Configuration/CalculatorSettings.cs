@@ -19,6 +19,6 @@ namespace kMCCoatings.Core.Configuration
 
         public int Lz { get; set; }
 
-
+        public double CrossRadius { get; set; }
     }
 }

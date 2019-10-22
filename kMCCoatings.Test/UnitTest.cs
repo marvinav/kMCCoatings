@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
+using System.Timers;
 using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
@@ -44,7 +48,7 @@ namespace kMCCoatings.Test
         public void IsContains()
         {
             var lattice = DimerSettings.Lattices.First();
-            Assert.True(lattice.IsContains(firstAtomInDimer.ElementId, secondAtomInDimer.ElementId));
+            Assert.True(lattice.IsContains(firstAtomInDimer.Element.Id, secondAtomInDimer.Element.Id));
             Assert.True(lattice.IsContains(22, 22));
             Assert.True(lattice.IsContains(22, 24));
             Assert.True(lattice.IsContains(24, 22));
@@ -73,8 +77,44 @@ namespace kMCCoatings.Test
             Console.WriteLine(resultedVector.ToString());
             Assert.True(false);
         }
-    }
 
+
+        [Fact]
+        public void SelectBenchmark()
+        {
+            var points = new List<Atom>(1000000);
+            var rnd = new Random();
+            var counter = 0;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                var x = rnd.Next(0, 100000);
+                var y = rnd.Next(0, 100000);
+                var z = rnd.Next(0, 100000);
+                counter++;
+                points.Add(new Atom()
+                {
+                    Coordinate = new Point3D((double)x / 1000, (double)y / 1000, (double)z / 1000),
+                    Site = new Site(),
+                    Transitions = new List<Transition>(50)
+                });
+            };
+
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var atom = points[1000];
+            Point3D dimension = new Point3D(100, 100, 100);
+            var rslt = points.Where(at => atom.CalculateDistance(at, dimension) < 3).ToList();
+            stopWatch.Stop();
+            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
+        }
+
+        [Fact]
+        public void AffectedAtomsCalculation()
+        {
+            //TODO: Выполнить тест диффузии заданного количества атомов без потока.
+        }
+    }
     public class Test
     {
         public DimerSettings DimerSettings = new DimerSettings();
@@ -84,30 +124,33 @@ namespace kMCCoatings.Test
 
         public Test()
         {
+            var chrome = new Element()
+            {
+                Id = 24
+            };
+            var titanium = new Element()
+            {
+                Id = 22
+            };
+            var nitride = new Element()
+            {
+                Id = 7
+            };
+
             firstAtomInDimer = new Atom()
             {
-                ElementId = 7,
+                Element = chrome,
                 Site = new Site()
                 {
-                    Coordinates = new GlobalCoordinates()
-                    {
-                        X = 0,
-                        Y = 0,
-                        Z = 0
-                    }
+                    Coordinates = new Point3D(0, 0, 0)
                 }
             };
             secondAtomInDimer = new Atom()
             {
-                ElementId = 22,
+                Element = titanium,
                 Site = new Site()
                 {
-                    Coordinates = new GlobalCoordinates()
-                    {
-                        X = 1,
-                        Y = 1,
-                        Z = 0
-                    }
+                    Coordinates = new Point3D(1, 1, 0)
                 }
             };
 
@@ -123,3 +166,4 @@ namespace kMCCoatings.Test
         }
     }
 }
+

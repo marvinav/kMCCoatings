@@ -20,7 +20,7 @@ namespace kMCCoatings.Core.Configuration
         public Lattice[] Lattices { get; set; }
 
 
-
+        public List<InteractionEnergy> InteractionEnergies { get; set; }
 
         /// <summary>
         /// Создает связь между атомами, если это разрешено
@@ -40,6 +40,22 @@ namespace kMCCoatings.Core.Configuration
             return result;
         }
 
+        /// <summary>
+        /// Получить энергию взаимодействия двух атомов
+        /// </summary>
+        public double InteractionEnergy(Atom fAtom, Atom sAtom)
+        {
+            double result;
+            if (fAtom.ElementId == sAtom.ElementId)
+            {
+                result = InteractionEnergies.First(x => x.Elements.Count(el => el == fAtom.ElementId) == 2).Energy;
+            }
+            else
+            {
+                result = InteractionEnergies.First(x => x.Elements.Contains(fAtom.ElementId) && x.Elements.Contains(sAtom.ElementId)).Energy;
+            }
+            return result;
+        }
 
 
         #region Инфраструктура
@@ -56,6 +72,11 @@ namespace kMCCoatings.Core.Configuration
                 ContractResolver = contractResolver
             };
         }
+
+        /// <summary>
+        /// Формирование настроек диммера из файла конфигурации
+        /// </summary>
+        public static DimerSettings CreateDimerSettings(string json) => JsonConvert.DeserializeObject<DimerSettings>(json, GetJsonConvert());
         #endregion Инфраструктура
     }
 }

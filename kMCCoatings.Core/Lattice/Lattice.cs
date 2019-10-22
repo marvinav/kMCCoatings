@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using kMCCoatings.Core.Entities.DimerRoot;
+using kMCCoatings.Core.Extension;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace kMCCoatings.Core.LatticeRoot
         /// <summary>
         /// Энергия связи хим.эл-ов
         /// </summary>
-        public ElementsEnergy[] ElementsEnergies { get; set; }
+        public InteractionEnergy[] ElementsEnergies { get; set; }
         /// <summary>
         /// Взаимное расположение атомов в решётки
         /// </summary>
@@ -57,9 +58,9 @@ namespace kMCCoatings.Core.LatticeRoot
                 foreach (var tranRule in transRule.Rules)
                 {
                     // Получение поворотов
-                    var toTurn = ParseVector(tranRule.Turn, cs);
-                    var axis = ParseVector(tranRule.Around, cs);
-                    transSites.AddRange(RotateVector(toTurn, axis, tranRule.Angle));
+                    var toTurn = cs.ParseVectorInGlobal(tranRule.Turn);
+                    var axis = cs.ParseVectorInGlobal(tranRule.Around);
+                    transSites.AddRange(toTurn.RotateVector(axis, tranRule.Angle));
                 }
                 translations.Add(new Translation()
                 {
@@ -69,31 +70,6 @@ namespace kMCCoatings.Core.LatticeRoot
                 });
             }
             return translations.ToArray();
-        }
-
-        /// <summary>
-        /// Преобразует крист.направление в вектор в глобальных координатах
-        /// </summary>
-        public Vector3D ParseVector(string vector, CoordinateSystem cs)
-        {
-            var vectors = vector.Split(" ");
-            var coefX = Convert.ToDouble(vectors[1]);
-            var coefY = Convert.ToDouble(vectors[2]);
-            var coefZ = Convert.ToDouble(vectors[3]);
-            return (coefX * cs.XAxis) + (coefY * cs.YAxis) + (coefZ * cs.ZAxis);
-        }
-
-        /// <summary>
-        /// Вращение вектора относительно другого вектора с заданным шагом от нуля до 360
-        /// </summary>
-        public Vector3D[] RotateVector(Vector3D vector, Vector3D aroundAxis, int angle)
-        {
-            var result = new Vector3D[360 / angle];
-            for (int i = 0; i < 360; i += angle)
-            {
-                result[i] = vector.Rotate(aroundAxis, Angle.FromDegrees(i));
-            }
-            return result;
         }
 
         ///<summary>

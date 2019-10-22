@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using MathNet.Spatial.Euclidean;
+using MathNet.Spatial.Units;
 
 namespace kMCCoatings.Core.Extension
 {
@@ -74,7 +76,32 @@ namespace kMCCoatings.Core.Extension
                     Z = (float)Math.Round(lenght * sinInZ, precision)
                 });
             }
-            return result;         
+            return result;
+        }
+
+        /// <summary>
+        /// Преобразует крист.направление в вектор в глобальных координатах
+        /// </summary>
+        public static Vector3D ParseVectorInGlobal(this CoordinateSystem cs, string vector)
+        {
+            var vectors = vector.Split(" ");
+            var coefX = Convert.ToDouble(vectors[1]);
+            var coefY = Convert.ToDouble(vectors[2]);
+            var coefZ = Convert.ToDouble(vectors[3]);
+            return (coefX * cs.XAxis) + (coefY * cs.YAxis) + (coefZ * cs.ZAxis);
+        }
+
+        /// <summary>
+        /// Вращение вектора относительно другого вектора с заданным шагом от нуля до 360
+        /// </summary>
+        public static Vector3D[] RotateVector(this Vector3D vector, Vector3D aroundAxis, int angle)
+        {
+            var result = new Vector3D[360 / angle];
+            for (int i = 0; i < 360; i += angle)
+            {
+                result[i] = vector.Rotate(aroundAxis, Angle.FromDegrees(i));
+            }
+            return result;
         }
     }
 }

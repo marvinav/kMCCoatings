@@ -1,6 +1,6 @@
 namespace kMCCoatings.Core.LatticeRoot
 {
-    public class ElementsEnergy
+    public class InteractionEnergy
     {
         public int[] Elements { get; set; }
 

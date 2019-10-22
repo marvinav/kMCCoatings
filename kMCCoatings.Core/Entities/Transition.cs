@@ -14,7 +14,7 @@ namespace kMCCoatings.Core.Entities
         /// <summary>
         /// Энергия активации перехода
         /// </summary>
-        public int ActivationEnergy { get; set; }
+        public double ActivationEnergy { get; set; }
 
         /// <summary>
         /// Целевой сайт
@@ -25,5 +25,12 @@ namespace kMCCoatings.Core.Entities
         /// Атом, который осуществляет переход
         /// </summary>
         public Atom Atom { get; set; }
+
+        public Transition(Atom atom, Site targetSite, double activationEnergy)
+        {
+            Atom = atom;
+            TargetSite = targetSite;
+            ActivationEnergy = activationEnergy;
+        }
     }
 }

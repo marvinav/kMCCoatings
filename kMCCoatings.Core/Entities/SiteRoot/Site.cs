@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using kMCCoatings.Core.Entities.AtomRoot;
+using MathNet.Spatial.Euclidean;
 
 namespace kMCCoatings.Core.Entities.SiteRoot
 {
@@ -8,22 +9,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// <summary>
         /// Координаты сайта.
         /// </summary>
-        public GlobalCoordinates Coordinates { get; set; }
-
-        /// <summary>
-        /// Левая граница клетки
-        /// </summary>
-        public float X { get; set; }
-
-        /// <summary>
-        /// Нижняя граница клетки
-        /// </summary>
-        public float Y { get; set; }
-
-        /// <summary>
-        /// Положение клетки на оси Z
-        /// </summary>
-        public float Z { get; set; }
+        public Point3D Coordinates { get; set; }
 
         /// <summary>
         /// Состояние сайта
@@ -31,7 +17,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public SiteStatus SiteStatus { get; set; }
 
         /// <summary>
-        /// Состояние сайта
+        /// Тип сайта
         /// </summary>
         public SiteType SiteType { get; set; }
 
@@ -41,10 +27,32 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public Atom OccupiedAtom { get; set; }
 
         /// <summary>
-        /// Список всех типов возможных атомов, который могут окупировать этот сайт
+        /// Список всех элементов, которые могут окупировать этот сайт
         /// </summary>
         public int[] AtomTypeIds { get; set; }
 
+        /// <summary>
+        /// Список соседних атомов у сайта
+        /// </summary>
+        public List<Atom> NeigborhoodsAtom { get; set; }
 
+        public Dictionary<int, double> Energies { get; set; }
+
+        public void AddAtomToInteractionField(Atom atom)
+        {
+            NeigborhoodsAtom.Add(atom);
+            foreach (var elementId in AtomTypeIds)
+            {
+                Energies[elementId] += atom.Element.InteractionEnergy[elementId];
+            }
+        }
+
+        /// <summary>
+        /// Получить энергию взаимодействия атома в данном сайте
+        /// </summary>
+        public double EnergyInSite(int elementId)
+        {
+            return Energies[elementId];
+        }
     }
 }

@@ -1,4 +1,27 @@
 {
+    "interactionEnergies": [
+        {
+            "elements": [
+                7,
+                22
+            ],
+            "energy": 4
+        },
+        {
+            "elements": [
+                7,
+                24
+            ],
+            "energy": 3
+        },
+        {
+            "elements": [
+                22,
+                24
+            ],
+            "energy": 3.5
+        }
+    ],
     "lattices": [
         {
             "name": "TiCrN",
@@ -16,29 +39,6 @@
                     "elements": [
                         7
                     ]
-                }
-            ],
-            "elementsEnergies": [
-                {
-                    "elements": [
-                        7,
-                        22
-                    ],
-                    "energy": 4
-                },
-                {
-                    "elements": [
-                        7,
-                        24
-                    ],
-                    "energy": 2
-                },
-                {
-                    "elements": [
-                        22,
-                        24
-                    ],
-                    "energy": 3
                 }
             ],
             "atomsRelations": [

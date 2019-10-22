@@ -3,5 +3,11 @@
 		{
 			"path": "C:\\Users\\av_ch\\source\\repos\\kMCCoatings"
 		}
-	]
+	],
+	"settings": {
+		"cSpell.ignoreWords": [
+			"coord",
+			"coef"
+		]
+	}
 }

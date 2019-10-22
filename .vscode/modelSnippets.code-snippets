@@ -10,7 +10,7 @@
 		"scope": "markdown",
 		"prefix": "номе",
 		"body": [
-			"[<b style=\"color:red\">$1</b>](n$1)"
+			"[<b style=\"color:red\">$1</b>](#n$1)"
 		],
 		"description": "Insert variable"
 	}

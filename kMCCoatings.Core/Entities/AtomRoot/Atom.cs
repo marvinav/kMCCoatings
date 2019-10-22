@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using kMCCoatings.Core.Entities.SiteRoot;
+using kMCCoatings.Core.LatticeRoot;
+using MathNet.Spatial.Euclidean;
 
 namespace kMCCoatings.Core.Entities.AtomRoot
 {
@@ -13,11 +15,10 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// </summary>
         public int AtomNumber { get; set; }
 
-        public static int AtomCounter { get; set; } = 0;
         /// <summary>
         /// Тип атома
         /// </summary>
-        public int ElementId { get; set; }
+        public Element Element { get; set; }
 
         /// <summary>
         /// Сайт, в котором находится атом
@@ -30,6 +31,16 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         public List<Transition> Transitions { get; set; }
 
         /// <summary>
+        /// Список соседних атомов
+        /// </summary>
+        public List<Atom> Neigborhoods { get; set; }
+
+        /// <summary>
+        /// Координаты атома
+        /// </summary>
+        public Point3D Coordinate { get; set; }
+
+        /// <summary>
         /// Рассчитать все возможные переходы
         /// </summary>
         public static void CalculateTransitions(Atom atom)
@@ -37,17 +48,40 @@ namespace kMCCoatings.Core.Entities.AtomRoot
 
         }
 
-        public static int CalculateDistance(Atom first, Atom second)
+        /// <summary>
+        /// Выполняет расчёт расстояния до указанного атома
+        /// </summary>
+        public double CalculateDistance(Atom second)
         {
-            return (int)Math.Sqrt(Math.Pow(first.Site.Coordinates.X - second.Site.Coordinates.X, 2.0) +
-                Math.Pow(first.Site.Coordinates.Y - second.Site.Coordinates.Y, 2.0) +
-                Math.Pow(first.Site.Coordinates.Z - second.Site.Coordinates.Z, 2.0));
+            return second.Coordinate.DistanceTo(Coordinate);
         }
 
-        public Atom()
+        /// <summary>
+        /// Выполняет расчёт расстояния до указанного атома
+        /// </summary>
+        public double CalculateDistance(Atom second, Point3D dimension)
         {
-            AtomNumber = AtomCounter;
-            AtomCounter++;
+            double distance;
+            if (Math.Abs(second.Coordinate.X - Coordinate.X) > dimension.X / 2
+                || Math.Abs(second.Coordinate.Y - Coordinate.Y) > dimension.Y / 2)
+            {
+                double moreX, lessX, moreY, lessY;
+                (moreX, lessX) = Coordinate.X > second.Coordinate.X
+                    ? (Coordinate.X, second.Coordinate.X)
+                    : (second.Coordinate.X, Coordinate.X);
+                (moreY, lessY) = Coordinate.Y > second.Coordinate.Y
+                                        ? (Coordinate.Y, second.Coordinate.Y)
+                                        : (second.Coordinate.Y, Coordinate.Y);
+                distance = (new Vector3D(
+                            dimension.X - moreX + lessX,
+                            dimension.Y - moreY + lessY,
+                            second.Coordinate.Z - Coordinate.Z)).Length;
+            }
+            else
+            {
+                distance = Coordinate.DistanceTo(second.Coordinate);
+            }
+            return distance;
         }
     }
 }
