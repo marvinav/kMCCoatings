@@ -39,7 +39,7 @@ namespace kMCCoatings.Test
         [Fact]
         public void DimerFormation()
         {
-            // TODO: Реализовать формирование списка возможных трансляций вектора доя поиска сайта
+            //TODO: Реализовать формирование списка возможных трансляций вектора доя поиска сайта
             Dimer dimer = new Dimer(firstAtomInDimer, secondAtomInDimer, DimerSettings);
             dimers.Add(dimer);
         }

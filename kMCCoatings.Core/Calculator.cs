@@ -2,6 +2,7 @@
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
 using kMCCoatings.Core.Entities.SiteRoot;
+using kMCCoatings.Core.Extension;
 using MathNet.Spatial.Euclidean;
 using System;
 using System.Collections.Concurrent;
@@ -41,10 +42,19 @@ namespace kMCCoatings.Core
         public List<Transition> Transitions { get; set; }
 
         /// <summary>
-        /// Список возможных сайтов
+        /// Список всех сайтов
         /// </summary>
         public List<Site> Sites { get; set; }
 
+        /// <summary>
+        /// Список свободных сайтов
+        /// </summary>
+        public List<Site> VacantedSites { get; set; }
+
+        /// <summary>
+        /// Список запрещённых сайтов
+        /// </summary>
+        public List<Site> ForbiddenSites { get; set; }
         public DimerSettings DimerSettings { get; set; }
 
         public double CrossRadius { get; set; }
@@ -84,20 +94,59 @@ namespace kMCCoatings.Core
 
         }
 
-        /// <summary>
-        /// П
-        /// </summary>
-        public void ScanCrossField(Atom affectedAtom)
+        /// Добавить атом в вычисления
+        public void AddAtom(Point3D coord, Element element)
         {
-            var energy = affectedAtom.Site.EnergyInSite(affectedAtom.Element.Id);
-            var transtions = new List<Transition>();
-            Parallel.ForEach(Sites, (Action<Site>)(site =>
+            var atom = new Atom()
             {
-                if (site.AtomTypeIds.Contains(affectedAtom.Element.Id) && site.SiteStatus == SiteStatus.Vacanted)
+                Element = element,
+                Site = new Site()
                 {
-                    transtions.Add(new Transition(affectedAtom, site, (double)(site.Energies[affectedAtom.Element.Id] - energy)));
+                    Coordinates = coord,
+                    SiteType = SiteType.Free,
+                    SiteStatus = SiteStatus.Occupied,
+                    NeigborhoodsAtom = Atoms.Where(atom => Dimension.CalculateDistance(atom.Site.Coordinates, coord) < CrossRadius).ToList()
                 }
-            }));
+            };
+
+            Atoms.Add(atom);
+        }
+
+        /// <summary>
+        /// Формируем список переходов
+        /// </summary>
+        public void CalculateTransion(Atom movedAtom, Site targetSite)
+        {
+            // Получаем у перемещённого атома список старых связей
+            var oldNeigborhoods = movedAtom.Site.NeigborhoodsAtom;
+            // Получаем новые списки связей: их необходимо обновить
+            var newNeigborhoods = targetSite.NeigborhoodsAtom.Concat(oldNeigborhoods);
+            var lostNeigborhoods = oldNeigborhoods.Concat(newNeigborhoods).ToList();
+
+
+            //TODO: реализовать обновление параметров сайтов и атомов, оказавшихся в области воздействия атома
+            // NOTE: послать список приобритённых и список потерянных связей
+
+            var oldSite = movedAtom.Site;
+            var oldEnergy = oldSite.EnergyInSite(movedAtom.Element.Id);
+            var difEnergy = oldEnergy - targetSite.EnergyInSite(movedAtom.Element.Id);
+
+
+            // var transtions = new List<Transition>();
+            // var vacSites = VacantedSites.Where(vs => movedAtom.CalculateDistance(vs.Coordinates, Dimension) < CrossRadius);
+            // // Получаем сайты уже сформированных диммеров
+            // Parallel.ForEach(vacSites, site =>
+            // {
+            //     if (site.AtomTypeIds.Contains(movedAtom.Element.Id) && site.SiteStatus == SiteStatus.Vacanted)
+            //     {
+            //         transtions.Add(new Transition(movedAtom, site, site.EnergyInSite(movedAtom.Element.Id) - energy));
+            //     }
+            // });
+            // // Ищем свободные атомы
+            // Parallel.ForEach(movedAtom.Site.NeigborhoodsAtom.Where(na => na.Site.SiteType != SiteType.Lattice), source =>
+            // {
+            //     source.Site.Si
+            // });
         }
     }
 }

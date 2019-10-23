@@ -7,6 +7,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
     public enum SiteType
     {
         Lattice,
+        Dimer,
         Free
     }
 }

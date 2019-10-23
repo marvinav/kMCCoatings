@@ -73,7 +73,7 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// <param name="dimerSettings"></param>
         private static List<Vector3> CalculateTranslations(Vector3 basicVector, DimerSettings dimerSettings)
         {
-            // TODO: Получить список трансляций для димера в глобальных системах координат
+            //TODO: Получить список трансляций для димера в глобальных системах координат
             //var translations = dimerSettings.Translations; // Список  трансляций в кристаллографических координатах
             var m1 = basicVector;
             throw new NotImplementedException();

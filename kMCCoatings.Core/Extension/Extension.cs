@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using kMCCoatings.Core.LatticeRoot;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 
@@ -102,6 +104,42 @@ namespace kMCCoatings.Core.Extension
                 result[i] = vector.Rotate(aroundAxis, Angle.FromDegrees(i));
             }
             return result;
+        }
+
+        /// <summary>
+        /// Выполняет расчёт расстояния между указанными точками с учетом ограниченного пространства
+        /// </summary>
+        public static double CalculateDistance(this Point3D dimension, Point3D first, Point3D second)
+        {
+            double distance;
+            if (Math.Abs(second.X - first.X) > dimension.X / 2
+                || Math.Abs(second.Y - first.Y) > dimension.Y / 2)
+            {
+                double moreX, lessX, moreY, lessY;
+                (moreX, lessX) = first.X > second.X
+                    ? (first.X, second.X)
+                    : (second.X, first.X);
+                (moreY, lessY) = first.Y > second.Y
+                                        ? (first.Y, second.Y)
+                                        : (second.Y, first.Y);
+                distance = new Vector3D(
+                            dimension.X - moreX + lessX,
+                            dimension.Y - moreY + lessY,
+                            second.Z - first.Z).Length;
+            }
+            else
+            {
+                distance = first.DistanceTo(second);
+            }
+            return distance;
+        }
+
+        public static Dictionary<int, List<InteractionEnergy>> GetInteractionEnergiesForElement(this List<InteractionEnergy> energies, int elementId)
+        {
+            var elementEnergies = energies.Where(e => e.Elements.Contains(elementId));
+            //TODO: сделать формирование словаря энергий для каждого атома
+            return null;
+
         }
     }
 }
