@@ -34,18 +34,38 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// <summary>
         /// Список соседних атомов у сайта
         /// </summary>
-        public List<Atom> NeigborhoodsAtom { get; set; }
+        public List<Atom> NeigborhoodsAtom { get; set; } = new List<Atom>();
 
-        public Dictionary<int, double> Energies { get; set; }
+        /// <summary>
+        /// Список соседних сайтов
+        /// </summary>
+        public List<Site> NeigborhoodsSites { get; set; } = new List<Site>();
+
+        public Dictionary<int, double> Energies { get; set; } = new Dictionary<int, double>();
 
         public void AddAtomToInteractionField(Atom atom)
         {
             NeigborhoodsAtom.Add(atom);
-            foreach (var elementId in AtomTypeIds)
+            //TODO: исправить энергию
+            Energies.TryAdd(atom.Element.Id, atom)
+
+
+        }
+        public void AddAtomsToInteractionField(IEnumerable<Atom> atoms)
+        {
+            if (atoms != null)
             {
-                Energies[elementId] += atom.Element.InteractionEnergy[elementId];
+                NeigborhoodsAtom.AddRange(atoms);
+                foreach (var atom in atoms)
+                {
+                    foreach (var elementId in AtomTypeIds)
+                    {
+                        Energies[elementId] += atom.Element.InteractionEnergy[elementId];
+                    }
+                }
             }
         }
+
 
         /// <summary>
         /// Получить энергию взаимодействия атома в данном сайте

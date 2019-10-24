@@ -57,11 +57,10 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             };
             // Ищем подходящую решётку
             Lattice = (from Lattice lattice in dimerSettings.Lattices
-                       where lattice.IsContains(firstAtom.ElementId, secondAtom.ElementId)
+                       where lattice.IsContains(firstAtom.Element.Id, secondAtom.Element.Id)
                        select lattice).FirstOrDefault();
 
             // Получаем кристаллографическое направление в глобальных координатах, сформировавшееся в диммере
-            var globalVector = new Vector3(firstAtom.Site.X - secondAtom.Site.Y, firstAtom.Site.Y - secondAtom.Site.Y, firstAtom.Site.Z - firstAtom.Site.Z);
 
             // Расчёт трансляций димера
             Translations = null;

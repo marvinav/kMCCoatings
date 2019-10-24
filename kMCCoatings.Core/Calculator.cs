@@ -29,22 +29,23 @@ namespace kMCCoatings.Core
         /// <summary>
         /// Список всех атомов покрытия
         /// </summary>
-        public List<Atom> Atoms { get; set; }
+        public List<Atom> Atoms { get; set; } = new List<Atom>();
 
         /// <summary>
         /// Список атомов, чьи энергии необходимо пересчитать
         /// </summary>
-        public List<Atom> AffectedAtoms { get; set; }
+        public List<Atom> AffectedAtoms { get; set; } = new List<Atom>();
 
         /// <summary>
         /// Список переходов, которые будут осуществляться в этой иттерации.
-        /// </summary>        
-        public List<Transition> Transitions { get; set; }
+        /// </summary>
+
+        public Dictionary<int, Transition> Transitions { get; set; }
 
         /// <summary>
         /// Список всех сайтов
         /// </summary>
-        public List<Site> Sites { get; set; }
+        public List<Site> Sites { get; set; } = new List<Site>();
 
         /// <summary>
         /// Список свободных сайтов
@@ -58,15 +59,14 @@ namespace kMCCoatings.Core
         public DimerSettings DimerSettings { get; set; }
 
         public double CrossRadius { get; set; }
-        public Calculator(CalculatorSettings calculatorSettings)
-        {
-            CrossRadius = calculatorSettings.CrossRadius;
-        }
 
-        public void AddAtoms(IEnumerable<Atom> atoms)
+        public double DiffusionRadius { get; set; }
+
+        public double ForbiddenRadius { get; set; }
+
+        public double ContactRadius { get; set; }
+        public Calculator()
         {
-            Atoms.AddRange(atoms);
-            AffectedAtoms = Atoms;
         }
 
         /// <summary>
@@ -74,16 +74,16 @@ namespace kMCCoatings.Core
         /// </summary>
         public void UpdateAtomsState()
         {
-            Parallel.ForEach(AffectedAtoms, afAtoms =>
-            {
-                afAtoms.Neigborhoods = Atoms.Where(at => at.CalculateDistance(afAtoms) <= CrossRadius).ToList();
-                afAtoms.Site = new Site()
-                {
-                    Coordinates = afAtoms.Coordinate,
-                    OccupiedAtom = afAtoms,
-                    SiteStatus = SiteStatus.Occupied
-                };
-            });
+            // Parallel.ForEach(AffectedAtoms, afAtoms =>
+            // {
+            //     afAtoms.Neigborhoods = Atoms.Where(at => at.CalculateDistance(afAtoms) <= CrossRadius).ToList();
+            //     afAtoms.Site = new Site()
+            //     {
+            //         Coordinates = afAtoms.Coordinate,
+            //         OccupiedAtom = afAtoms,
+            //         SiteStatus = SiteStatus.Occupied
+            //     };
+            // });
         }
 
         /// <summary>
@@ -94,9 +94,12 @@ namespace kMCCoatings.Core
 
         }
 
-        /// Добавить атом в вычисления
+        /// <summary>
+        /// Добавить атом к вычислениям
+        /// <summary>
         public void AddAtom(Point3D coord, Element element)
         {
+            var sites = Sites.Where(site => Dimension.CalculateDistance(site.Coordinates, coord) < CrossRadius).ToList();
             var atom = new Atom()
             {
                 Element = element,
@@ -105,48 +108,43 @@ namespace kMCCoatings.Core
                     Coordinates = coord,
                     SiteType = SiteType.Free,
                     SiteStatus = SiteStatus.Occupied,
-                    NeigborhoodsAtom = Atoms.Where(atom => Dimension.CalculateDistance(atom.Site.Coordinates, coord) < CrossRadius).ToList()
+                    NeigborhoodsSites = sites
                 }
             };
+            atom.Site.OccupiedAtom = atom;
+            atom.Site.AddAtomsToInteractionField(sites.Where(s => s.OccupiedAtom != null).Select(s => s.OccupiedAtom).ToList());
+            //TODO: после инициализации атома, нужно просканировать окружение на неянвные сайты (наличие рядом св. атома)
+            var sitesBetweenAtoms = atom.FindSiteBetweenAtoms(CrossRadius, ForbiddenRadius, ContactRadius, Dimension,
+                atom.Site.NeigborhoodsAtom.Where(x => x.Site.SiteType == SiteType.Free));
+            atom.Site.NeigborhoodsSites.AddRange(sitesBetweenAtoms);
 
             Atoms.Add(atom);
+            Sites.Add(atom.Site);
+            Sites.AddRange(sitesBetweenAtoms);
         }
 
         /// <summary>
-        /// Формируем список переходов
+        /// Формируем список переходов для атома
         /// </summary>
-        public void CalculateTransion(Atom movedAtom, Site targetSite)
+        public List<Transition> CalculateTransion(Atom movedAtom, params Site[] targetSites)
         {
-            // Получаем у перемещённого атома список старых связей
-            var oldNeigborhoods = movedAtom.Site.NeigborhoodsAtom;
-            // Получаем новые списки связей: их необходимо обновить
-            var newNeigborhoods = targetSite.NeigborhoodsAtom.Concat(oldNeigborhoods);
-            var lostNeigborhoods = oldNeigborhoods.Concat(newNeigborhoods).ToList();
+            var result = new List<Transition>();
+            foreach (var targetSite in targetSites)
+            {
+                // Получаем у перемещённого атома список старых связей
+                var oldNeigborhoods = movedAtom.Site.NeigborhoodsAtom;
+                // Получаем новые списки связей: их необходимо обновить
+                var newNeigborhoods = targetSite.NeigborhoodsAtom.Concat(oldNeigborhoods);
+                var lostNeigborhoods = oldNeigborhoods.Concat(newNeigborhoods).ToList();
+                //TODO: реализовать обновление параметров сайтов и атомов, оказавшихся в области воздействия атома
+                //NOTE: послать список приобритённых и список потерянных связей
+                var oldSite = movedAtom.Site;
+                var oldEnergy = oldSite.EnergyInSite(movedAtom.Element.Id);
+                var difEnergy = oldEnergy - targetSite.EnergyInSite(movedAtom.Element.Id);
 
-
-            //TODO: реализовать обновление параметров сайтов и атомов, оказавшихся в области воздействия атома
-            // NOTE: послать список приобритённых и список потерянных связей
-
-            var oldSite = movedAtom.Site;
-            var oldEnergy = oldSite.EnergyInSite(movedAtom.Element.Id);
-            var difEnergy = oldEnergy - targetSite.EnergyInSite(movedAtom.Element.Id);
-
-
-            // var transtions = new List<Transition>();
-            // var vacSites = VacantedSites.Where(vs => movedAtom.CalculateDistance(vs.Coordinates, Dimension) < CrossRadius);
-            // // Получаем сайты уже сформированных диммеров
-            // Parallel.ForEach(vacSites, site =>
-            // {
-            //     if (site.AtomTypeIds.Contains(movedAtom.Element.Id) && site.SiteStatus == SiteStatus.Vacanted)
-            //     {
-            //         transtions.Add(new Transition(movedAtom, site, site.EnergyInSite(movedAtom.Element.Id) - energy));
-            //     }
-            // });
-            // // Ищем свободные атомы
-            // Parallel.ForEach(movedAtom.Site.NeigborhoodsAtom.Where(na => na.Site.SiteType != SiteType.Lattice), source =>
-            // {
-            //     source.Site.Si
-            // });
+                result.Add(new Transition(movedAtom, targetSite, difEnergy));
+            }
+            return result;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace kMCCoatings.Core.Configuration
 
         public List<InteractionEnergy> InteractionEnergies { get; set; }
         public Dictionary<int, Dictionary<int, List<InteractionEnergy>>> InteractionEnergiesByElementId { get; set; }
+
         /// <summary>
         /// Создает связь между атомами, если это разрешено
         /// </summary>
@@ -31,28 +32,11 @@ namespace kMCCoatings.Core.Configuration
             // Ищем подходящую решётку
             for (int i = 0; i < Lattices.Length; i++)
             {
-                if (Lattices[i].IsContains(fAtom.ElementId, sAtom.ElementId))
-                {
-                    result = new BoundedAtoms(fAtom, sAtom, Lattices[i]);
-                    break;
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Получить энергию взаимодействия двух атомов
-        /// </summary>
-        public double InteractionEnergy(Atom fAtom, Atom sAtom)
-        {
-            double result;
-            if (fAtom.ElementId == sAtom.ElementId)
-            {
-                result = InteractionEnergies.First(x => x.Elements.Count(el => el == fAtom.ElementId) == 2).Energy;
-            }
-            else
-            {
-                result = InteractionEnergies.First(x => x.Elements.Contains(fAtom.ElementId) && x.Elements.Contains(sAtom.ElementId)).Energy;
+                // if (Lattices[i].IsContains(fAtom.ElementId, sAtom.ElementId))
+                // {
+                //     result = new BoundedAtoms(fAtom, sAtom, Lattices[i]);
+                //     break;
+                // }
             }
             return result;
         }

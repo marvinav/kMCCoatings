@@ -32,20 +32,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             Lattice = lattice;
         }
 
-        public List<Transition> CalculateTransitions()
-        {
-            //TODO: Рассчитать переход и учесть адгезию с близлежайщими атомами
-            return new List<Transition>()
-            {
-                new Transition()
-                {
-                    Atom = Atoms[0],
-                    TargetSite = new SiteRoot.Site()
-                    {
-                        SiteType = SiteRoot.SiteType.Free
-                    }
-                }
-            };
-        }
+
     }
 }

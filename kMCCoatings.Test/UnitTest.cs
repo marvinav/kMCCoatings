@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
+using kMCCoatings.Core;
 using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
@@ -42,6 +43,72 @@ namespace kMCCoatings.Test
             //TODO: Реализовать формирование списка возможных трансляций вектора доя поиска сайта
             Dimer dimer = new Dimer(firstAtomInDimer, secondAtomInDimer, DimerSettings);
             dimers.Add(dimer);
+        }
+
+        [Fact]
+        public void AddAtomToCalculator()
+        {
+            var ti = new Element()
+            {
+                Id = 22,
+                InteractionEnergy = new Dictionary<int, double>()
+                {
+                    {7, 2},
+                    {22, 2},
+                    {24, 1.5}
+                },
+                InteractionRadius = new Dictionary<int, double>()
+                {
+                    {7, 0.70710678},
+                    {22, 1},
+                    {24, 1}
+                }
+            };
+            var cr = new Element()
+            {
+                Id = 24,
+                InteractionEnergy = new Dictionary<int, double>()
+                {
+                    {7, 1.8},
+                    {22, 1.5},
+                    {24, 1.3}
+                },
+                InteractionRadius = new Dictionary<int, double>()
+                {
+                    {7, 0.70710678},
+                    {22, 1},
+                    {24, 1}
+                }
+            };
+            var n = new Element()
+            {
+                Id = 7,
+                InteractionEnergy = new Dictionary<int, double>()
+                {
+                    {7, 1},
+                    {22, 2},
+                    {24, 1.8}
+                },
+                InteractionRadius = new Dictionary<int, double>()
+                {
+                    {7, 0.70710678},
+                    {22, 0.70710678},
+                    {24, 0.70710678}
+                }
+            };
+            var cacl = new Calculator();
+            cacl.Dimension = new Point3D(100, 100, 100);
+            cacl.ContactRadius = 1.25;
+            cacl.CrossRadius = 2;
+            cacl.ForbiddenRadius = 0.707;
+            var customPoint = new Point3D(50, 50, 50);
+            cacl.AddAtom(customPoint, n);
+            Assert.True(cacl.Atoms.FirstOrDefault(x => x.Site.Coordinates == new Point3D(50, 50, 50)) != default(Atom));
+
+            var nearestPoint = new Point3D(51.2, 50, 50);
+
+            cacl.AddAtom(nearestPoint, ti);
+            var check = cacl.Atoms.FirstOrDefault(x => x.Site.NeigborhoodsSites.Any());
         }
 
         [Fact]
@@ -94,7 +161,6 @@ namespace kMCCoatings.Test
                 counter++;
                 points.Add(new Atom()
                 {
-                    Coordinate = new Point3D((double)x / 1000, (double)y / 1000, (double)z / 1000),
                     Site = new Site(),
                     Transitions = new List<Transition>(50)
                 });
@@ -104,7 +170,6 @@ namespace kMCCoatings.Test
             stopWatch.Start();
             var atom = points[1000];
             Point3D dimension = new Point3D(100, 100, 100);
-            var rslt = points.Where(at => atom.CalculateDistance(at, dimension) < 3).ToList();
             stopWatch.Stop();
             Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }
