@@ -1,4 +1,5 @@
 ﻿using kMCCoatings.Core.Entities;
+using MathNet.Spatial.Euclidean;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,13 +14,34 @@ namespace kMCCoatings.Core.Configuration
         /// <summary>
         /// The size of calculation
         /// </summary>
-        public int Lx { get; set; }
+        public Point3D Dimension { get; set; }
 
-        public int Ly { get; set; }
-
-        public int Lz { get; set; }
-
+        /// <summary>
+        /// Радиус сферы вокруг атома, которая зависит от положения атома
+        /// </summary>
         public double CrossRadius { get; set; }
+
+        /// <summary>
+        /// Радиус сферы вокруг атома, куда может диффунзировать атом
+        /// </summary>
+        public double DiffusionRadius { get; set; }
+
+        /// <summary>
+        /// Минимальное расстояние между двумя атомами
+        /// </summary>
+        public double ForbiddenRadius { get; set; }
+
+        /// <summary>
+        /// Радиус, при котором связь считается при подсчёте контакта
+        /// </summary>
+        public double ContactRadius { get; set; }
+
+        /// <summary>
+        /// Радиус взаимодействия атомов
+        /// </summary>
+        public double InteractionRadius { get; set; }
+
+        public int ContactRule { get; set; }
 
     }
 }

@@ -134,6 +134,15 @@ namespace kMCCoatings.Core.Extension
             return distance;
         }
 
+        public static Point3D TranslatePointInDimension(this Point3D dimension, Point3D point)
+        {
+            double x, y, z;
+            x = point.X > dimension.X ? point.X - dimension.X : point.X < 0 ? point.X + dimension.X : point.X;
+            y = point.Y > dimension.Y ? point.Y - dimension.Y : point.Y < 0 ? point.Y + dimension.Y : point.Y;
+            z = point.Z;
+            return new Point3D(x, y, z);
+        }
+
         public static Dictionary<int, List<InteractionEnergy>> GetInteractionEnergiesForElement(this List<InteractionEnergy> energies, int elementId)
         {
             var elementEnergies = energies.Where(e => e.Elements.Contains(elementId));

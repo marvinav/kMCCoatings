@@ -96,19 +96,32 @@ namespace kMCCoatings.Test
                     {24, 0.70710678}
                 }
             };
-            var cacl = new Calculator();
-            cacl.Dimension = new Point3D(100, 100, 100);
-            cacl.ContactRadius = 1.25;
-            cacl.CrossRadius = 2;
-            cacl.ForbiddenRadius = 0.707;
-            var customPoint = new Point3D(50, 50, 50);
-            cacl.AddAtom(customPoint, n);
-            Assert.True(cacl.Atoms.FirstOrDefault(x => x.Site.Coordinates == new Point3D(50, 50, 50)) != default(Atom));
+            var cals = new CalculatorSettings()
+            {
+                Dimension = new Point3D(100, 100, 100),
+                ContactRadius = 1.25,
+                CrossRadius = 3,
+                ForbiddenRadius = 0.707,
+                DiffusionRadius = 1,
+                InteractionRadius = 2
+            };
+            var cacl = new Calculator(cals);
 
-            var nearestPoint = new Point3D(51.2, 50, 50);
-
-            cacl.AddAtom(nearestPoint, ti);
-            var check = cacl.Atoms.FirstOrDefault(x => x.Site.NeigborhoodsSites.Any());
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 0; y < 100; y++)
+                {
+                    for (int z = 0; z < 100; z++)
+                    {
+                        var curPont = new Point3D(x, y, z);
+                        cacl.AddAtom(curPont, n);
+                    }
+                }
+            }
+            stopWatch.Stop();
+            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }
 
         [Fact]

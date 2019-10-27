@@ -21,10 +21,7 @@ namespace kMCCoatings.Core
         /// </summary>
         public double CalculationTime { get; set; }
 
-        /// <summary>
-        /// Пространство расчётов
-        /// </summary>
-        public Point3D Dimension { get; set; }
+        public CalculatorSettings CalculatorSettings { get; set; }
 
         /// <summary>
         /// Список всех атомов покрытия
@@ -40,12 +37,8 @@ namespace kMCCoatings.Core
         /// Список переходов, которые будут осуществляться в этой иттерации.
         /// </summary>
 
-        public Dictionary<int, Transition> Transitions { get; set; }
+        public Dictionary<Atom, List<Transition>> Transitions { get; set; }
 
-        /// <summary>
-        /// Список всех сайтов
-        /// </summary>
-        public List<Site> Sites { get; set; } = new List<Site>();
 
         /// <summary>
         /// Список свободных сайтов
@@ -58,17 +51,18 @@ namespace kMCCoatings.Core
         public List<Site> ForbiddenSites { get; set; }
         public DimerSettings DimerSettings { get; set; }
 
-        public double CrossRadius { get; set; }
-
-        public double DiffusionRadius { get; set; }
-
-        public double ForbiddenRadius { get; set; }
-
-        public double ContactRadius { get; set; }
+        /// <summary>
+        /// Служба управления сайтами
+        /// </summary>
+        public SiteService SiteService { get; set; }
         public Calculator()
         {
         }
-
+        public Calculator(CalculatorSettings calculatorSettings)
+        {
+            CalculatorSettings = calculatorSettings;
+            SiteService = new SiteService(CalculatorSettings);
+        }
         /// <summary>
         /// Обновляем состоянием атомов
         /// </summary>
@@ -99,52 +93,34 @@ namespace kMCCoatings.Core
         /// <summary>
         public void AddAtom(Point3D coord, Element element)
         {
-            var sites = Sites.Where(site => Dimension.CalculateDistance(site.Coordinates, coord) < CrossRadius).ToList();
+            // Получаем сайты в радиусе воздействия атома (CrossRadius)
+
+            var sites = SiteService.GetSites(coord).Where(site => CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, coord) < CalculatorSettings.CrossRadius).ToList();
             var atom = new Atom()
             {
                 Element = element,
+                // Формируем сайт, в котором сидит атом
                 Site = new Site()
                 {
                     Coordinates = coord,
                     SiteType = SiteType.Free,
                     SiteStatus = SiteStatus.Occupied,
-                    NeigborhoodsSites = sites
+                    CalculatorSettings = CalculatorSettings
                 }
             };
+
             atom.Site.OccupiedAtom = atom;
-            atom.Site.AddAtomsToInteractionField(sites.Where(s => s.OccupiedAtom != null).Select(s => s.OccupiedAtom).ToList());
-            //TODO: после инициализации атома, нужно просканировать окружение на неянвные сайты (наличие рядом св. атома)
-            var sitesBetweenAtoms = atom.FindSiteBetweenAtoms(CrossRadius, ForbiddenRadius, ContactRadius, Dimension,
-                atom.Site.NeigborhoodsAtom.Where(x => x.Site.SiteType == SiteType.Free));
-            atom.Site.NeigborhoodsSites.AddRange(sitesBetweenAtoms);
-
+            // Находим блуждающие атомы и рассчитываем для них связи
+            //NOTE: для димерных и кристаллических атомов пересчёт структур производиться не будет в предположении, что дифундирующий атом на может выбить на себя атом из решётки
+            atom.FindSiteBetweenAtomsBySites(sites.Where(x => x.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(x.Coordinates, coord) < CalculatorSettings.ContactRadius));
+            // Формируем список соседних сайтов
+            SiteService.AddRange(atom.Site.NeigborhoodsSite);
+            atom.Site.AddSitesWithReverse(sites);
+            //TODO: после добавления атома необходимо обновить сайты и переходы
             Atoms.Add(atom);
-            Sites.Add(atom.Site);
-            Sites.AddRange(sitesBetweenAtoms);
+            SiteService.Add(atom.Site);
         }
 
-        /// <summary>
-        /// Формируем список переходов для атома
-        /// </summary>
-        public List<Transition> CalculateTransion(Atom movedAtom, params Site[] targetSites)
-        {
-            var result = new List<Transition>();
-            foreach (var targetSite in targetSites)
-            {
-                // Получаем у перемещённого атома список старых связей
-                var oldNeigborhoods = movedAtom.Site.NeigborhoodsAtom;
-                // Получаем новые списки связей: их необходимо обновить
-                var newNeigborhoods = targetSite.NeigborhoodsAtom.Concat(oldNeigborhoods);
-                var lostNeigborhoods = oldNeigborhoods.Concat(newNeigborhoods).ToList();
-                //TODO: реализовать обновление параметров сайтов и атомов, оказавшихся в области воздействия атома
-                //NOTE: послать список приобритённых и список потерянных связей
-                var oldSite = movedAtom.Site;
-                var oldEnergy = oldSite.EnergyInSite(movedAtom.Element.Id);
-                var difEnergy = oldEnergy - targetSite.EnergyInSite(movedAtom.Element.Id);
 
-                result.Add(new Transition(movedAtom, targetSite, difEnergy));
-            }
-            return result;
-        }
     }
 }
