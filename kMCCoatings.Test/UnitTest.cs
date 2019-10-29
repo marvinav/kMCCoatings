@@ -109,17 +109,27 @@ namespace kMCCoatings.Test
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            for (int x = 0; x < 100; x++)
-            {
-                for (int y = 0; y < 100; y++)
-                {
-                    for (int z = 0; z < 100; z++)
-                    {
-                        var curPont = new Point3D(x, y, z);
-                        cacl.AddAtom(curPont, n);
-                    }
-                }
-            }
+            // for (int x = 0; x < 100; x++)
+            // {
+            //     for (int y = 0; y < 100; y++)
+            //     {
+            //         for (int z = 0; z < 100; z++)
+            //         {
+            //             var curPont = new Point3D(x, y, z);
+            //             cacl.AddAtom(curPont, n);
+            //         }
+            //     }
+            // }
+            var x = new Point3D(10, 10, 10);
+            var y = new Point3D(10, 10, 11);
+            var z = new Point3D(10, 10, 9);
+            var w = new Point3D(10, 9, 10);
+            var q = new Point3D(10, 11, 10);
+            cacl.AddAtom(x, n);
+            cacl.AddAtom(y, n);
+            cacl.AddAtom(z, n);
+            cacl.AddAtom(w, n);
+            cacl.AddAtom(q, n);
             stopWatch.Stop();
             Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }
@@ -159,33 +169,6 @@ namespace kMCCoatings.Test
         }
 
 
-        [Fact]
-        public void SelectBenchmark()
-        {
-            var points = new List<Atom>(1000000);
-            var rnd = new Random();
-            var counter = 0;
-
-            for (int i = 0; i < 1000000; i++)
-            {
-                var x = rnd.Next(0, 100000);
-                var y = rnd.Next(0, 100000);
-                var z = rnd.Next(0, 100000);
-                counter++;
-                points.Add(new Atom()
-                {
-                    Site = new Site(),
-                    Transitions = new List<Transition>(50)
-                });
-            };
-
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            var atom = points[1000];
-            Point3D dimension = new Point3D(100, 100, 100);
-            stopWatch.Stop();
-            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
-        }
 
         [Fact]
         public void AffectedAtomsCalculation()
@@ -213,23 +196,6 @@ namespace kMCCoatings.Test
             var nitride = new Element()
             {
                 Id = 7
-            };
-
-            firstAtomInDimer = new Atom()
-            {
-                Element = chrome,
-                Site = new Site()
-                {
-                    Coordinates = new Point3D(0, 0, 0)
-                }
-            };
-            secondAtomInDimer = new Atom()
-            {
-                Element = titanium,
-                Site = new Site()
-                {
-                    Coordinates = new Point3D(1, 1, 0)
-                }
             };
 
             var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";

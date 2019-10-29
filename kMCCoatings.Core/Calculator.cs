@@ -93,32 +93,26 @@ namespace kMCCoatings.Core
         /// <summary>
         public void AddAtom(Point3D coord, Element element)
         {
-            // Получаем сайты в радиусе воздействия атома (CrossRadius)
-
-            var sites = SiteService.GetSites(coord).Where(site => CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, coord) < CalculatorSettings.CrossRadius).ToList();
-            var atom = new Atom()
+            // Формируем сайт
+            var site = new Site
             {
-                Element = element,
-                // Формируем сайт, в котором сидит атом
-                Site = new Site()
-                {
-                    Coordinates = coord,
-                    SiteType = SiteType.Free,
-                    SiteStatus = SiteStatus.Occupied,
-                    CalculatorSettings = CalculatorSettings
-                }
+                Coordinates = coord,
+                SiteType = SiteType.Free,
+                SiteStatus = SiteStatus.Occupied,
+                CalculatorSettings = CalculatorSettings
             };
+            var atom = new Atom(element, site);
 
-            atom.Site.OccupiedAtom = atom;
-            // Находим блуждающие атомы и рассчитываем для них связи
-            //NOTE: для димерных и кристаллических атомов пересчёт структур производиться не будет в предположении, что дифундирующий атом на может выбить на себя атом из решётки
-            atom.FindSiteBetweenAtomsBySites(sites.Where(x => x.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(x.Coordinates, coord) < CalculatorSettings.ContactRadius));
+            // Получаем список сайтов и атомов, попадающих в область влияния
+            var sites = SiteService.GetSites(coord).Where(site => CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, coord) <= CalculatorSettings.CrossRadius).ToList();
+
             // Формируем список соседних сайтов
-            SiteService.AddRange(atom.Site.NeigborhoodsSite);
             atom.Site.AddSitesWithReverse(sites);
+
             //TODO: после добавления атома необходимо обновить сайты и переходы
             Atoms.Add(atom);
             SiteService.Add(atom.Site);
+            SiteService.AddRange(atom.Site.DimerSites.Values.ToList());
         }
 
 

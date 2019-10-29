@@ -41,6 +41,10 @@ namespace kMCCoatings.Core.Configuration
         /// </summary>
         public double InteractionRadius { get; set; }
 
+        /// <summary>
+        /// Максимальный радиус связп межжду двумя атомами, при котором они могут сформировать димер
+        /// </summary>
+        public double PossibleToDifuseRadius => DiffusionRadius * 2;
         public int ContactRule { get; set; }
 
     }

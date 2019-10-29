@@ -36,31 +36,34 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// <summary>
         /// Находит сайты между свободно-жиффундирующими атомомами, формирует эти сайты, изменяя сайты
         /// </summary>
-        public void FindSiteBetweenAtomsBySites(IEnumerable<Site> targetSites)
+        public List<Site> FindSiteBetweenAtomsBySites(List<Atom> targetAtoms)
         {
             var cals = Site.CalculatorSettings;
+            var result = new List<Site>();
             //Связь с диффундирующим атомом определяется так, что строится прямая между двумя свободными сайтами
             //Из этого направления считается противоположный с росстоянием, равным справочнику и прибавляется к целевому атому
-            foreach (var targetSite in targetSites)
+            foreach (var targetSite in targetAtoms.Select(x => x.Site))
             {
                 var direction = Site.Coordinates - targetSite.Coordinates;
-                var coordinates = targetSite.Coordinates + direction.ScaleBy(Element.InteractionRadius[targetSite.OccupiedAtom.Element.Id] / direction.Length);
+                var scaledDirection = direction.ScaleBy(Element.InteractionRadius[targetSite.OccupiedAtom.Element.Id] / direction.Length);
+                var coordinates = targetSite.Coordinates + scaledDirection;
+                var reversedCoordinates = targetSite.Coordinates - scaledDirection;
                 var site = new Site()
                 {
                     Coordinates = targetSite.Coordinates + direction.ScaleBy(Element.InteractionRadius[targetSite.OccupiedAtom.Element.Id] / direction.Length),
                     SiteStatus = SiteStatus.Vacanted,
                     SiteType = SiteType.Dimer
                 };
-                var neigborhoods = Site.NeigborhoodsSite.Union(targetSite.NeigborhoodsSite).Except(new List<Site>(2) { targetSite, Site });
-                if (neigborhoods.FirstOrDefault(x => x.SiteStatus == SiteStatus.Occupied && cals.Dimension.CalculateDistance(x.Coordinates, coordinates) < cals.ForbiddenRadius) == default(Site))
+                var neigborhoods = Site.CrossSites.Union(targetSite.CrossSites).Except(new List<Site>(2) { targetSite, Site });
+
+                // Если количество соседних сайтов с заданным радиусом, отвечающим контактному правилу меньше трёх (за вычетом текущих двух атомов)
+                if (neigborhoods.Count(x => x.SiteStatus == SiteStatus.Occupied && cals.Dimension.CalculateDistance(x.Coordinates, site.Coordinates) < cals.ContactRadius) < cals.ContactRule)
                 {
-                    // Если количество соседних сайтов с заданным радиусом, отвечающим контактному правилу меньше трёх (за вычетом текущих двух атомов)
-                    if (neigborhoods.Count(x => x.SiteStatus == SiteStatus.Occupied && cals.Dimension.CalculateDistance(x.Coordinates, site.Coordinates) < cals.ContactRadius) < cals.ContactRule)
-                    {
-                        site.AddSitesWithReverse(neigborhoods.Union(new List<Site>(2) { Site, targetSite }));
-                    }
+                    site.AddSitesWithReverse(neigborhoods.Union(new List<Site>(2) { Site, targetSite }));
+                    result.Add(site);
                 }
             }
+            return result;
         }
 
         /// <summary>
@@ -85,10 +88,17 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// </summary>
         public List<Transition> CalculateTransion()
         {
-            var result = CalculateTransion(Site.NeigborhoodsSite.
+            var result = CalculateTransion(Site.CrossSites.
                 Where(x => x.SiteStatus == SiteStatus.Vacanted &&
                 Site.CalculatorSettings.Dimension.CalculateDistance(Site.Coordinates, x.Coordinates) <= Site.CalculatorSettings.DiffusionRadius));
             return result;
+        }
+
+        public Atom(Element element, Site site)
+        {
+            Element = element;
+            site.OccupiedAtom = this;
+            Site = site;
         }
     }
 }
