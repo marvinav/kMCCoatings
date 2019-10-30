@@ -10,4 +10,12 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         Vacanted,
         Prohibited
     }
+
+    public enum ProhibitedReason
+    {
+        None,
+        ContactRule,
+        ForbiddenRadius,
+        All
+    }
 }

@@ -99,37 +99,45 @@ namespace kMCCoatings.Test
             var cals = new CalculatorSettings()
             {
                 Dimension = new Point3D(100, 100, 100),
-                ContactRadius = 1.25,
+                ContactRadius = 1.3,
                 CrossRadius = 3,
                 ForbiddenRadius = 0.707,
                 DiffusionRadius = 1,
-                InteractionRadius = 2
+                InteractionRadius = 2,
+                ContactRule = 3
             };
             var cacl = new Calculator(cals);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            // for (int x = 0; x < 100; x++)
-            // {
-            //     for (int y = 0; y < 100; y++)
-            //     {
-            //         for (int z = 0; z < 100; z++)
-            //         {
-            //             var curPont = new Point3D(x, y, z);
-            //             cacl.AddAtom(curPont, n);
-            //         }
-            //     }
-            // }
-            var x = new Point3D(10, 10, 10);
-            var y = new Point3D(10, 10, 11);
-            var z = new Point3D(10, 10, 9);
-            var w = new Point3D(10, 9, 10);
-            var q = new Point3D(10, 11, 10);
-            cacl.AddAtom(x, n);
-            cacl.AddAtom(y, n);
-            cacl.AddAtom(z, n);
-            cacl.AddAtom(w, n);
-            cacl.AddAtom(q, n);
+            var O = new Point3D(10, 10, 10);
+            var z1 = new Point3D(10, 10, 11);
+            var z_1 = new Point3D(10, 10, 9);
+            var y1 = new Point3D(10, 11, 10);
+            var y_1 = new Point3D(10, 9, 10);
+            var z2 = new Point3D(10, 10, 12);
+            var y1z1 = new Point3D(10, 11, 11);
+            cacl.AddAtom(O, n);
+            cacl.AddAtom(z1, n);
+            cacl.AddAtom(z_1, n);
+            cacl.AddAtom(y1, n);
+            cacl.AddAtom(y_1, n);
+            cacl.AddAtom(z2, n);
+            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(cacl.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => x.Coordinates));
+
+            Debug.Print(lists);
+            int numberOfSites = 0;
+            foreach (var cell in cacl.SiteService.SitesByCells.Values)
+            {
+                numberOfSites += cell.Count();
+            }
+            int numberOfTransition = 0;
+            foreach (var trans in cacl.Transitions.Values)
+            {
+                numberOfTransition += trans.Count();
+            }
+            Assert.True(numberOfSites == 33);
+            Assert.True(numberOfTransition == 28);
             stopWatch.Stop();
             Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }

@@ -37,7 +37,7 @@ namespace kMCCoatings.Core
         /// Список переходов, которые будут осуществляться в этой иттерации.
         /// </summary>
 
-        public Dictionary<Atom, List<Transition>> Transitions { get; set; }
+        public Dictionary<Atom, List<Transition>> Transitions { get; set; } = new Dictionary<Atom, List<Transition>>();
 
 
         /// <summary>
@@ -98,21 +98,92 @@ namespace kMCCoatings.Core
             {
                 Coordinates = coord,
                 SiteType = SiteType.Free,
-                SiteStatus = SiteStatus.Occupied,
-                CalculatorSettings = CalculatorSettings
+                SiteStatus = SiteStatus.Occupied
             };
             var atom = new Atom(element, site);
-
-            // Получаем список сайтов и атомов, попадающих в область влияния
-            var sites = SiteService.GetSites(coord).Where(site => CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, coord) <= CalculatorSettings.CrossRadius).ToList();
-
-            // Формируем список соседних сайтов
-            atom.Site.AddSitesWithReverse(sites);
-
-            //TODO: после добавления атома необходимо обновить сайты и переходы
             Atoms.Add(atom);
             SiteService.Add(atom.Site);
-            SiteService.AddRange(atom.Site.DimerSites.Values.ToList());
+            // Получаем список сайтов и атомов, изменившихся после добавления нового атома
+            // 1 Нужно для каждого соседнего атома посчитать наличие возможных сайтов
+            // 2 Для всех соседних сайтов нужно проверить их запрещённость
+            var affectedSites = SiteService.GetSites(coord).Except(new List<Site> { atom.Site });
+            var affectedAtoms = new List<Site>();
+            var newSites = new List<Site>();
+            foreach (var afSite in affectedSites)
+            {
+                var dist = CalculatorSettings.Dimension.CalculateDistance(coord, afSite.Coordinates);
+                if (dist <= CalculatorSettings.ForbiddenRadius) // Если в запрещённой области вокруг атома есть сайты, то они становятся запрещёнными
+                {
+                    afSite.AddProhibitedReason(ProhibitedReason.ForbiddenRadius);
+                }
+                else if (dist <= CalculatorSettings.PossibleToDifuseRadius && afSite.SiteType == SiteType.Free) // Смотрим возможные димеры
+                {
+                    newSites.AddRange(SiteService.FindSitesBetweenAtoms(atom, afSite.OccupiedAtom));
+                }
+
+                if (dist <= CalculatorSettings.ContactRadius && afSite.ProhibitedReason != ProhibitedReason.None && afSite.ProhibitedReason != ProhibitedReason.ForbiddenRadius)
+                {
+                    var contacts = affectedSites.Count(x => x.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(x.Coordinates, afSite.Coordinates) <= CalculatorSettings.ContactRadius);
+                    if (contacts >= CalculatorSettings.ContactRule)
+                    {
+                        afSite.RemoveProhibitedReason(ProhibitedReason.ContactRule);
+                    }
+                }
+                // Обновляем энергии для сайтов
+                if (dist <= CalculatorSettings.InteractionRadius)
+                {
+                    afSite.AddAtomToInteractionField(atom);
+                    if (afSite.SiteStatus == SiteStatus.Occupied)
+                    {
+                        atom.Site.AddAtomToInteractionField(afSite.OccupiedAtom);
+                    }
+                }
+                if (afSite.OccupiedAtom != null)
+                {
+                    affectedAtoms.Add(afSite);
+                }
+            }
+            SiteService.AddRange(newSites);
+
+            foreach (var afAtom in affectedAtoms.Union(new List<Site>() { atom.Site }))
+            {
+                var newTrans = CalculateTransition(atom);
+                if (Transitions.TryGetValue(atom, out var oldTransitions))
+                {
+                    oldTransitions = newTrans;
+                }
+                else
+                {
+                    Transitions.Add(atom, newTrans);
+                }
+            }
+        }
+
+        public List<Transition> CalculateTransition(Atom atom)
+        {
+            var neigborhoods = SiteService.GetSites(atom.Site.Coordinates, (int)CalculatorSettings.DiffusionRadius);
+            var transitions = new List<Transition>();
+            foreach (var neigbore in neigborhoods)
+            {
+                // Сразу проверяем, что сайт не окупирован амомом
+                if (neigbore.SiteStatus != SiteStatus.Occupied
+                    && CalculatorSettings.Dimension.CalculateDistance(atom.Site.Coordinates, neigbore.Coordinates) <= CalculatorSettings.DiffusionRadius)
+                {
+                    if (neigbore.ElementIds.Contains(atom.Element.Id) && neigbore.SiteStatus != SiteStatus.Prohibited)
+                    {
+                        transitions.Add(atom.CalculateTransion(neigbore));
+                    }
+                    else if (neigbore.DimerAtom == atom && neigbore.ProhibitedReason != ProhibitedReason.ContactRule)
+                    {
+                        var forbiddenRadiusCounter = neigborhoods.Count(x => CalculatorSettings.Dimension.CalculateDistance(neigbore.Coordinates, x.Coordinates) <= CalculatorSettings.ForbiddenRadius);
+                        if (forbiddenRadiusCounter <= 1)
+                        {
+                            transitions.Add(atom.CalculateTransion(neigbore));
+                        }
+                    }
+                }
+            }
+            return transitions;
         }
 
 

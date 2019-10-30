@@ -150,5 +150,14 @@ namespace kMCCoatings.Core.Extension
             return null;
 
         }
+
+        public static Point3D Round(this Point3D point, int precision = 5)
+        {
+            return new Point3D(Math.Round(point.X, precision), Math.Round(point.Y, precision), Math.Round(point.Z, precision));
+        }
+        public static Vector3D Round(this Vector3D point, int precision = 5)
+        {
+            return new Vector3D(Math.Round(point.X, precision), Math.Round(point.Y, precision), Math.Round(point.Z, precision));
+        }
     }
 }
