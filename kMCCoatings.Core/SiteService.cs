@@ -144,13 +144,12 @@ namespace kMCCoatings.Core
                 SiteType = SiteType.Dimer,
                 DimerAtom = dimerAtom
             };
-            var prohReason = ProhibitedReason.None;
             var forbRadius = false;
             var numberOfContact = 0;
             foreach (var nSite in neigborhoods.Where(x => x.SiteStatus == SiteStatus.Occupied))
             {
                 var dist = CalculatorSettings.Dimension.CalculateDistance(nSite.Coordinates, coor);
-                if (dist <= CalculatorSettings.ForbiddenRadius && nSite.DimerAtom != dimerAtom)
+                if (dist <= CalculatorSettings.ForbiddenRadius && nSite.OccupiedAtom != dimerAtom)
                 {
                     forbRadius = true;
                 }
@@ -163,7 +162,7 @@ namespace kMCCoatings.Core
                     site.AddAtomToInteractionField(nSite.OccupiedAtom);
                 }
             }
-            prohReason = forbRadius ? ProhibitedReason.ForbiddenRadius : prohReason;
+            var prohReason = forbRadius ? ProhibitedReason.ForbiddenRadius : ProhibitedReason.None;
             if (numberOfContact < CalculatorSettings.ContactRule)
             {
                 prohReason = prohReason == ProhibitedReason.None ? ProhibitedReason.ContactRule : ProhibitedReason.All;
@@ -174,6 +173,5 @@ namespace kMCCoatings.Core
 
             return site;
         }
-
     }
 }

@@ -46,6 +46,5 @@ namespace kMCCoatings.Core.Configuration
         /// </summary>
         public double PossibleToDifuseRadius => DiffusionRadius * 2;
         public int ContactRule { get; set; }
-
     }
 }

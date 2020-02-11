@@ -15,7 +15,6 @@ namespace kMCCoatings.Core
 {
     public class Calculator
     {
-
         /// <summary>
         /// Общее время интегрирования
         /// </summary>
@@ -39,7 +38,6 @@ namespace kMCCoatings.Core
 
         public Dictionary<Atom, List<Transition>> Transitions { get; set; } = new Dictionary<Atom, List<Transition>>();
 
-
         /// <summary>
         /// Список свободных сайтов
         /// </summary>
@@ -55,14 +53,17 @@ namespace kMCCoatings.Core
         /// Служба управления сайтами
         /// </summary>
         public SiteService SiteService { get; set; }
+
         public Calculator()
         {
         }
+
         public Calculator(CalculatorSettings calculatorSettings)
         {
             CalculatorSettings = calculatorSettings;
             SiteService = new SiteService(CalculatorSettings);
         }
+
         /// <summary>
         /// Обновляем состоянием атомов
         /// </summary>
@@ -85,7 +86,6 @@ namespace kMCCoatings.Core
         /// </summary>
         public void Start()
         {
-
         }
 
         /// <summary>
@@ -109,22 +109,24 @@ namespace kMCCoatings.Core
             var affectedSites = SiteService.GetSites(coord).Except(new List<Site> { atom.Site });
             var affectedAtoms = new List<Site>();
             var newSites = new List<Site>();
+
             foreach (var afSite in affectedSites)
             {
                 var dist = CalculatorSettings.Dimension.CalculateDistance(coord, afSite.Coordinates);
                 if (dist <= CalculatorSettings.ForbiddenRadius) // Если в запрещённой области вокруг атома есть сайты, то они становятся запрещёнными
                 {
                     afSite.AddProhibitedReason(ProhibitedReason.ForbiddenRadius);
+                    atom.Site.AddProhibitedReason(ProhibitedReason.ForbiddenRadius);
                 }
                 else if (dist <= CalculatorSettings.PossibleToDifuseRadius && afSite.SiteType == SiteType.Free) // Смотрим возможные димеры
                 {
                     newSites.AddRange(SiteService.FindSitesBetweenAtoms(atom, afSite.OccupiedAtom));
                 }
 
-                if (dist <= CalculatorSettings.ContactRadius && afSite.ProhibitedReason != ProhibitedReason.None && afSite.ProhibitedReason != ProhibitedReason.ForbiddenRadius)
+                if (dist <= CalculatorSettings.ContactRadius && afSite.IsContactRuleProhibited())
                 {
                     var contacts = affectedSites.Count(x => x.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(x.Coordinates, afSite.Coordinates) <= CalculatorSettings.ContactRadius);
-                    if (contacts >= CalculatorSettings.ContactRule)
+                    if (contacts >= CalculatorSettings.ContactRule - 1) // Учтён контакт с добавляемым атомом
                     {
                         afSite.RemoveProhibitedReason(ProhibitedReason.ContactRule);
                     }
@@ -147,14 +149,14 @@ namespace kMCCoatings.Core
 
             foreach (var afAtom in affectedAtoms.Union(new List<Site>() { atom.Site }))
             {
-                var newTrans = CalculateTransition(atom);
-                if (Transitions.TryGetValue(atom, out var oldTransitions))
+                var newTrans = CalculateTransition(afAtom.OccupiedAtom);
+                if (Transitions.TryGetValue(afAtom.OccupiedAtom, out var oldTransitions))
                 {
-                    oldTransitions = newTrans;
+                    Transitions[afAtom.OccupiedAtom] = newTrans;
                 }
                 else
                 {
-                    Transitions.Add(atom, newTrans);
+                    Transitions.Add(afAtom.OccupiedAtom, newTrans);
                 }
             }
         }
@@ -175,7 +177,7 @@ namespace kMCCoatings.Core
                     }
                     else if (neigbore.DimerAtom == atom && neigbore.ProhibitedReason != ProhibitedReason.ContactRule)
                     {
-                        var forbiddenRadiusCounter = neigborhoods.Count(x => CalculatorSettings.Dimension.CalculateDistance(neigbore.Coordinates, x.Coordinates) <= CalculatorSettings.ForbiddenRadius);
+                        var forbiddenRadiusCounter = neigborhoods.Count(x => x.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(neigbore.Coordinates, x.Coordinates) <= CalculatorSettings.ForbiddenRadius);
                         if (forbiddenRadiusCounter <= 1)
                         {
                             transitions.Add(atom.CalculateTransion(neigbore));
@@ -186,6 +188,9 @@ namespace kMCCoatings.Core
             return transitions;
         }
 
-
+        public void MakeTransition(Transition transition)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

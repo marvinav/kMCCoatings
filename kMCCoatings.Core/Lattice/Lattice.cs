@@ -17,10 +17,12 @@ namespace kMCCoatings.Core.LatticeRoot
         /// Имя соединения
         /// </summary>
         public string Name { get; set; }
+
         /// <summary>
         /// Количество атомов в решётке
         /// </summary>
         public int NumberOfAtoms { get; set; }
+
         /// <summary>
         /// Положение хим.элементов решётки
         /// </summary>
@@ -30,6 +32,7 @@ namespace kMCCoatings.Core.LatticeRoot
         /// Энергия связи хим.эл-ов
         /// </summary>
         public InteractionEnergy[] ElementsEnergies { get; set; }
+
         /// <summary>
         /// Взаимное расположение атомов в решётки
         /// </summary>
@@ -78,8 +81,8 @@ namespace kMCCoatings.Core.LatticeRoot
         public bool IsContains(int firstElementId, int secondElementId)
         {
             var result = false;
-            var firstId = ElementsPosition.Where(x => x.Elements.Contains(firstElementId)).FirstOrDefault()?.AtomId;
-            var secondId = ElementsPosition.Where(x => x.Elements.Contains(secondElementId)).FirstOrDefault()?.AtomId;
+            var firstId = ElementsPosition.FirstOrDefault(x => x.Elements.Contains(firstElementId))?.AtomId;
+            var secondId = ElementsPosition.FirstOrDefault(x => x.Elements.Contains(secondElementId))?.AtomId;
             if (firstId != null && secondId != null)
             {
                 int lessId;

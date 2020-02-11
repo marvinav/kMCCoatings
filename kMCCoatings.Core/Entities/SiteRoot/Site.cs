@@ -25,6 +25,11 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public ProhibitedReason ProhibitedReason { get; set; }
 
         /// <summary>
+        /// Счётчик запрещённых атомов
+        /// </summary>
+        public int ForbiddenRAtoms { get; set; }
+
+        /// <summary>
         /// Тип сайта
         /// </summary>
         public SiteType SiteType { get; set; }
@@ -113,6 +118,11 @@ namespace kMCCoatings.Core.Entities.SiteRoot
                 ProhibitedReason = ProhibitedReason.None;
                 SiteStatus = SiteStatus.Vacanted;
             }
+        }
+
+        public bool IsContactRuleProhibited()
+        {
+            return ProhibitedReason == ProhibitedReason.ContactRule || ProhibitedReason == ProhibitedReason.All;
         }
     }
 }

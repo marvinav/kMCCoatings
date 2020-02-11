@@ -27,14 +27,10 @@ namespace kMCCoatings.Test
         public void LatticeFromJSON()
         {
             var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
-            using (var fs = new FileStream(path, FileMode.Open))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    var fileContent = sr.ReadToEnd();
-                    var result = DimerSettings.GetLatticeFromJson(fileContent);
-                }
-            }
+            using var fs = new FileStream(path, FileMode.Open);
+            using var sr = new StreamReader(fs);
+            var fileContent = sr.ReadToEnd();
+            var result = DimerSettings.GetLatticeFromJson(fileContent);
         }
 
         [Fact]
@@ -101,7 +97,7 @@ namespace kMCCoatings.Test
                 Dimension = new Point3D(100, 100, 100),
                 ContactRadius = 1.3,
                 CrossRadius = 3,
-                ForbiddenRadius = 0.707,
+                ForbiddenRadius = 0.5,
                 DiffusionRadius = 1,
                 InteractionRadius = 2,
                 ContactRule = 3
@@ -116,14 +112,13 @@ namespace kMCCoatings.Test
             var y1 = new Point3D(10, 11, 10);
             var y_1 = new Point3D(10, 9, 10);
             var z2 = new Point3D(10, 10, 12);
-            var y1z1 = new Point3D(10, 11, 11);
             cacl.AddAtom(O, n);
             cacl.AddAtom(z1, n);
             cacl.AddAtom(z_1, n);
             cacl.AddAtom(y1, n);
             cacl.AddAtom(y_1, n);
-            cacl.AddAtom(z2, n);
-            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(cacl.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => x.Coordinates));
+            // cacl.AddAtom(z2, n);
+            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(cacl.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => new { Coor = x.Coordinates, Dimer = x.DimerAtom?.Site.Coordinates, Occupied = x.OccupiedAtom?.Site.Coordinates, Reason = x.ProhibitedReason }));
 
             Debug.Print(lists);
             int numberOfSites = 0;
@@ -136,8 +131,8 @@ namespace kMCCoatings.Test
             {
                 numberOfTransition += trans.Count();
             }
-            Assert.True(numberOfSites == 33);
-            Assert.True(numberOfTransition == 28);
+            Assert.True(numberOfSites == 21);
+            Assert.True(numberOfTransition == 16);
             stopWatch.Stop();
             Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }
@@ -207,13 +202,11 @@ namespace kMCCoatings.Test
             };
 
             var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
-            using (var fs = new FileStream(path, FileMode.Open))
+            using var fs = new FileStream(path, FileMode.Open);
+            using (var sr = new StreamReader(fs))
             {
-                using (var sr = new StreamReader(fs))
-                {
-                    var fileContent = sr.ReadToEnd();
-                    DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
-                }
+                var fileContent = sr.ReadToEnd();
+                DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
             }
         }
     }
