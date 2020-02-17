@@ -9,7 +9,6 @@ namespace kMCCoatings.Core.Entities.AtomRoot
 {
     public class Element
     {
-
         /// <summary>
         /// Id элемента, соответсвующий порядковому номеру в таблицы Менделева
         /// </summary>

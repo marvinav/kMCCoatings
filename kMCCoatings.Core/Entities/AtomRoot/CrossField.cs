@@ -13,6 +13,7 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// Координаты атома
         /// </summary>
         public Point3D AtomCor { get; set; }
+
         public CrossField(Point3D atomCoor)
         {
             AtomCor = atomCoor;

@@ -56,6 +56,7 @@ namespace kMCCoatings.Core
 
         public Calculator()
         {
+
         }
 
         public Calculator(CalculatorSettings calculatorSettings)

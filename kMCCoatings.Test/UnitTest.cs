@@ -178,6 +178,12 @@ namespace kMCCoatings.Test
         {
             //TODO: Выполнить тест диффузии заданного количества атомов без потока.
         }
+
+        [Fact]
+        public void LoadJsonSettings()
+        {
+            CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\settings.json");
+        }
     }
     public class Test
     {

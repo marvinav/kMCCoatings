@@ -12,7 +12,6 @@ namespace kMCCoatings.Core.Entities.AtomRoot
 {
     public class Atom
     {
-
         /// <summary>
         /// Номер атома в вычислениях
         /// </summary>
