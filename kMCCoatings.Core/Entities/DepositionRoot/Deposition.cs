@@ -8,7 +8,7 @@ namespace kMCCoatings.Core.Entities.DepositionRoot
     public class Deposition
     {
         /// <summary>
-        /// Концентрационный профиль поступающего потока, где номер массива - шаг иттерации.
+        /// Концентрационный профиль поступающего потока, где номер массива - шаг итерации.
         /// Если шаг интеграции превышает размер массива, то поток считается циклическим.
         /// </summary>
         private readonly ElementConcentration[][] _concentrationFlow;
@@ -22,7 +22,7 @@ namespace kMCCoatings.Core.Entities.DepositionRoot
         /// Максимальный шаг концентрационного профиля, если <see cref="Deposition._step"/> превышает это значение, то
         /// оно обнуляется и считается начало нового цикла.
         /// </summary>
-        private int _maxStep { get; set; }
+        private readonly int _maxStep;
 
         public Deposition(ElementConcentration[][] concentrationFlow, int step = -1)
         {
@@ -32,7 +32,7 @@ namespace kMCCoatings.Core.Entities.DepositionRoot
         }
 
         /// <summary>
-        /// Получить концентрационный профиль на следующем участке иттерации
+        /// Получить концентрационный профиль на следующем участке итерации
         /// </summary>
         public ElementConcentration[] MakeStep()
         {

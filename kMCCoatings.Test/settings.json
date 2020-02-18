@@ -1,0 +1,161 @@
+{
+    "elements": [
+        {
+            "id": 7,
+            "lattices": [
+                {
+                    "name": "TiCrN",
+                    "interactionEnergy": {
+                        "7": "2",
+                        "22": "2",
+                        "24": "1.5"
+                    },
+                    "interactionRadius": {
+                        "7": "0.70710678",
+                        "22": "1",
+                        "24": "1"
+                    }
+                }
+            ]
+        },
+        {
+            "id": 22,
+            "lattices": [
+                {
+                    "name": "TiCrN",
+                    "interactionEnergy": {
+                        "7": "2",
+                        "22": "1",
+                        "24": "1"
+                    },
+                    "interactionRadius": {
+                        "7": "0.70710678",
+                        "22": "1",
+                        "24": "1"
+                    }
+                }
+            ]
+        },
+        {
+            "id": 24,
+            "lattices": [
+                {
+                    "name": "TiCrN",
+                    "interactionEnergy": {
+                        "7": "2",
+                        "22": "1",
+                        "24": "1"
+                    },
+                    "interactionRadius": {
+                        "7": "0.70710678",
+                        "22": "1",
+                        "24": "1"
+                    }
+                }
+            ]
+        }
+    ],
+    "deposition": {
+        "concentrationFlow": [
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 10
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 25
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 30
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 110
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 215
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 310
+                }
+            ]
+        ]
+    },
+    "dimer": {
+        "lattices": {
+            "fcc": {
+                "translations": [
+                    [
+                        -1,
+                        -1,
+                        0
+                    ],
+                    [
+                        -1,
+                        1,
+                        0
+                    ],
+                    [
+                        1,
+                        -1,
+                        0
+                    ],
+                    [
+                        1,
+                        1,
+                        0
+                    ],
+                    [
+                        -1,
+                        0,
+                        -1
+                    ],
+                    [
+                        1,
+                        0,
+                        -1
+                    ],
+                    [
+                        0,
+                        -1,
+                        -1
+                    ],
+                    [
+                        0,
+                        1,
+                        -1
+                    ],
+                    [
+                        -1,
+                        0,
+                        1
+                    ],
+                    [
+                        1,
+                        0,
+                        1
+                    ],
+                    [
+                        0,
+                        -1,
+                        1
+                    ],
+                    [
+                        0,
+                        1,
+                        1
+                    ]
+                ],
+                "rules": {
+                    "contact": 3
+                }
+            }
+        }
+    }
+}

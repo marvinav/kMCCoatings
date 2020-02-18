@@ -75,14 +75,14 @@ namespace kMCCoatings.Core.LatticeRoot
             return translations.ToArray();
         }
 
-        ///<summary>
+        /// <summary>
         /// Определяет, формируют ли два указанных атома кристаллическую решётку.
-        ///</summary>
+        /// </summary>
         public bool IsContains(int firstElementId, int secondElementId)
         {
             var result = false;
-            var firstId = ElementsPosition.FirstOrDefault(x => x.Elements.Contains(firstElementId))?.AtomId;
-            var secondId = ElementsPosition.FirstOrDefault(x => x.Elements.Contains(secondElementId))?.AtomId;
+            var firstId = Array.Find(ElementsPosition, x => x.Elements.Contains(firstElementId))?.AtomId;
+            var secondId = Array.Find(ElementsPosition, x => x.Elements.Contains(secondElementId))?.AtomId;
             if (firstId != null && secondId != null)
             {
                 int lessId;

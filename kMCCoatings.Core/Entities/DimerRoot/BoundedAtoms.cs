@@ -31,7 +31,5 @@ namespace kMCCoatings.Core.Entities.DimerRoot
             };
             Lattice = lattice;
         }
-
-
     }
 }

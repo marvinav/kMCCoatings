@@ -3,7 +3,6 @@ using MathNet.Spatial.Euclidean;
 
 namespace kMCCoatings.Core.Entities.AtomRoot
 {
-
     /// <summary>
     /// Запрещённая область вокруг атома
     /// </summary>

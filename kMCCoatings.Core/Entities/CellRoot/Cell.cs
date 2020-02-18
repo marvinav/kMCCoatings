@@ -31,7 +31,5 @@ namespace kMCCoatings.Core.Entities.CellRoot
         /// Координаты соседних клеток
         /// </summary>
         public List<GlobalCoordinates> Neighbors { get; set; }
-
-
     }
 }

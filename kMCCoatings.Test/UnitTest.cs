@@ -19,6 +19,7 @@ using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Xunit;
 
+
 namespace kMCCoatings.Test
 {
     public class UnitTest : Test
@@ -26,7 +27,7 @@ namespace kMCCoatings.Test
         [Fact]
         public void LatticeFromJSON()
         {
-            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            const string path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
             using var fs = new FileStream(path, FileMode.Open);
             using var sr = new StreamReader(fs);
             var fileContent = sr.ReadToEnd();
@@ -92,7 +93,7 @@ namespace kMCCoatings.Test
                     {24, 0.70710678}
                 }
             };
-            var cals = new CalculatorSettings()
+            var calсSettings = new CalculatorSettings()
             {
                 Dimension = new Point3D(100, 100, 100),
                 ContactRadius = 1.3,
@@ -102,7 +103,7 @@ namespace kMCCoatings.Test
                 InteractionRadius = 2,
                 ContactRule = 3
             };
-            var cacl = new Calculator(cals);
+            var calc = new Calculator(new Settings() { Calculator = calсSettings });
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -112,35 +113,35 @@ namespace kMCCoatings.Test
             var y1 = new Point3D(10, 11, 10);
             var y_1 = new Point3D(10, 9, 10);
             var z2 = new Point3D(10, 10, 12);
-            cacl.AddAtom(O, n);
-            cacl.AddAtom(z1, n);
-            cacl.AddAtom(z_1, n);
-            cacl.AddAtom(y1, n);
-            cacl.AddAtom(y_1, n);
-            // cacl.AddAtom(z2, n);
-            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(cacl.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => new { Coor = x.Coordinates, Dimer = x.DimerAtom?.Site.Coordinates, Occupied = x.OccupiedAtom?.Site.Coordinates, Reason = x.ProhibitedReason }));
+            calc.AddAtom(O, n);
+            calc.AddAtom(z1, n);
+            calc.AddAtom(z_1, n);
+            calc.AddAtom(y1, n);
+            calc.AddAtom(y_1, n);
+            // calc.AddAtom(z2, n);
+            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(calc.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => new { Coor = x.Coordinates, Dimer = x.DimerAtom?.Site.Coordinates, Occupied = x.OccupiedAtom?.Site.Coordinates, Reason = x.ProhibitedReason }));
 
             Debug.Print(lists);
             int numberOfSites = 0;
-            foreach (var cell in cacl.SiteService.SitesByCells.Values)
+            foreach (var cell in calc.SiteService.SitesByCells.Values)
             {
-                numberOfSites += cell.Count();
+                numberOfSites += cell.Count;
             }
             int numberOfTransition = 0;
-            foreach (var trans in cacl.Transitions.Values)
+            foreach (var trans in calc.Transitions.Values)
             {
-                numberOfTransition += trans.Count();
+                numberOfTransition += trans.Count;
             }
             Assert.True(numberOfSites == 21);
             Assert.True(numberOfTransition == 16);
             stopWatch.Stop();
-            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
+            Console.WriteLine($"Elapsed time: {stopWatch.ElapsedMilliseconds}");
         }
 
         [Fact]
         public void IsContains()
         {
-            var lattice = DimerSettings.Lattices.First();
+            var lattice = DimerSettings.Lattices[0];
             Assert.True(lattice.IsContains(firstAtomInDimer.Element.Id, secondAtomInDimer.Element.Id));
             Assert.True(lattice.IsContains(22, 22));
             Assert.True(lattice.IsContains(22, 24));
@@ -155,23 +156,19 @@ namespace kMCCoatings.Test
         }
 
         /// <summary>
-        /// Проверка формирования списка транслиций
+        /// Проверка формирования списка трансляции
         /// </summary>
         [Fact]
         public void CreateVectorFromMath()
         {
-
-            CoordinateSystem cs = new CoordinateSystem();
-            Vector3D vect = new Vector3D(2, 3, 1);
-            var rotationVect = new Vector3D(1, -1, 1);
+            Vector3D vector = new Vector3D(2, 3, 1);
+            var rotationVector = new Vector3D(1, -1, 1);
             var a = Angle.FromDegrees(355);
 
-            var resultedVector = vect.Rotate(rotationVect, a);
+            var resultedVector = vector.Rotate(rotationVector, a);
             Console.WriteLine(resultedVector.ToString());
             Assert.True(false);
         }
-
-
 
         [Fact]
         public void AffectedAtomsCalculation()
@@ -182,9 +179,10 @@ namespace kMCCoatings.Test
         [Fact]
         public void LoadJsonSettings()
         {
-            CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\settings.json");
+            var calc = CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\kmcCoatings.Test\\settings.json");
         }
     }
+
     public class Test
     {
         public DimerSettings DimerSettings = new DimerSettings();
@@ -207,7 +205,7 @@ namespace kMCCoatings.Test
                 Id = 7
             };
 
-            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            const string path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
             using var fs = new FileStream(path, FileMode.Open);
             using (var sr = new StreamReader(fs))
             {

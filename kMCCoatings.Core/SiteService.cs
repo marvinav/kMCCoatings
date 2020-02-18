@@ -45,8 +45,9 @@ namespace kMCCoatings.Core
             }
             return result;
         }
+
         /// <summary>
-        /// Получить сайт вокргу указанной координаты с заданным радиусом
+        /// Получить сайт вокруг указанной координаты с заданным радиусом
         /// </summary>
         public List<Site> GetSites(Point3D coord, int radius)
         {
@@ -72,6 +73,7 @@ namespace kMCCoatings.Core
             }
             return result;
         }
+
         public void AddRange(List<Site> sites)
         {
             foreach (var site in sites)
@@ -95,9 +97,7 @@ namespace kMCCoatings.Core
             {
                 SitesByCells.Add(key, new List<Site>() { site });
             }
-
         }
-
 
         // Проверяет, принадлежат ли сайты к одной клетки пространства
         public bool IsOneCell(Site firstPoint, Site secondPoint)
@@ -108,7 +108,7 @@ namespace kMCCoatings.Core
         }
 
         /// <summary>
-        /// Находит сайты между свободно-жиффундирующими атомомами, формирует эти сайты, изменяя сайты
+        /// Находит сайты между свободно-диффундирующий атомомами, формирует эти сайты, изменяя сайты
         /// </summary>
         public List<Site> FindSitesBetweenAtoms(Atom firstAtom, Atom secondAtom)
         {
@@ -124,10 +124,10 @@ namespace kMCCoatings.Core
                 var firstToSecond = firstAtom.Site.Coordinates + scaledDirection;
                 var secondToFirst = secondAtom.Site.Coordinates - scaledDirection;
                 // Находим соседей этих двух сайтов
-                var neigborhoods = GetSites(firstAtom.Site.Coordinates + direction / 2);
+                var neighborhoods = GetSites(firstAtom.Site.Coordinates + (direction / 2));
 
-                var fSite = CheckDimerSiteRule(neigborhoods, firstToSecond, secondAtom);
-                var sSite = CheckDimerSiteRule(neigborhoods, secondToFirst, firstAtom);
+                var fSite = CheckDimerSiteRule(neighborhoods, firstToSecond, secondAtom);
+                var sSite = CheckDimerSiteRule(neighborhoods, secondToFirst, firstAtom);
                 result.Add(fSite);
                 result.Add(sSite);
                 // Если количество соседних сайтов с заданным радиусом, отвечающим контактному правилу меньше трёх (за вычетом текущих двух атомов)
@@ -136,7 +136,7 @@ namespace kMCCoatings.Core
             return result;
         }
 
-        private Site CheckDimerSiteRule(List<Site> neigborhoods, Point3D coor, Atom dimerAtom)
+        private Site CheckDimerSiteRule(List<Site> neighborhoods, Point3D coor, Atom dimerAtom)
         {
             var site = new Site()
             {
@@ -146,7 +146,7 @@ namespace kMCCoatings.Core
             };
             var forbRadius = false;
             var numberOfContact = 0;
-            foreach (var nSite in neigborhoods.Where(x => x.SiteStatus == SiteStatus.Occupied))
+            foreach (var nSite in neighborhoods.Where(x => x.SiteStatus == SiteStatus.Occupied))
             {
                 var dist = CalculatorSettings.Dimension.CalculateDistance(nSite.Coordinates, coor);
                 if (dist <= CalculatorSettings.ForbiddenRadius && nSite.OccupiedAtom != dimerAtom)
@@ -162,14 +162,14 @@ namespace kMCCoatings.Core
                     site.AddAtomToInteractionField(nSite.OccupiedAtom);
                 }
             }
-            var prohReason = forbRadius ? ProhibitedReason.ForbiddenRadius : ProhibitedReason.None;
+            var prohibitedReason = forbRadius ? ProhibitedReason.ForbiddenRadius : ProhibitedReason.None;
             if (numberOfContact < CalculatorSettings.ContactRule)
             {
-                prohReason = prohReason == ProhibitedReason.None ? ProhibitedReason.ContactRule : ProhibitedReason.All;
+                prohibitedReason = prohibitedReason == ProhibitedReason.None ? ProhibitedReason.ContactRule : ProhibitedReason.All;
             }
 
-            site.ProhibitedReason = prohReason;
-            site.SiteStatus = prohReason != ProhibitedReason.None ? SiteStatus.Prohibited : SiteStatus.Vacanted;
+            site.ProhibitedReason = prohibitedReason;
+            site.SiteStatus = prohibitedReason != ProhibitedReason.None ? SiteStatus.Prohibited : SiteStatus.Vacanted;
 
             return site;
         }

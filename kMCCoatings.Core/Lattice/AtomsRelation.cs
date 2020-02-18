@@ -8,5 +8,4 @@ namespace kMCCoatings.Core.LatticeRoot
 
         public string Direction { get; set; }
     }
-
 }
