@@ -19,7 +19,6 @@ using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Xunit;
 
-
 namespace kMCCoatings.Test
 {
     public class UnitTest : Test
@@ -207,12 +206,9 @@ namespace kMCCoatings.Test
 
             const string path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
             using var fs = new FileStream(path, FileMode.Open);
-            using (var sr = new StreamReader(fs))
-            {
-                var fileContent = sr.ReadToEnd();
-                DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
-            }
+            using var sr = new StreamReader(fs);
+            var fileContent = sr.ReadToEnd();
+            DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
         }
     }
 }
-

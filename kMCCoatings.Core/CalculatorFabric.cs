@@ -21,6 +21,9 @@ namespace kMCCoatings.Core
             return new Calculator(settings);
         }
 
+        /// <summary>
+        /// Проверяет целостность концентрационного потока
+        /// </summary>
         public static bool ValidateConcentrationFlow(Settings settings)
         {
             var flow = settings.Deposition.ConcentrationFlow;

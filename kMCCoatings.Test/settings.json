@@ -2,57 +2,42 @@
     "elements": [
         {
             "id": 7,
-            "lattices": [
-                {
-                    "name": "TiCrN",
-                    "interactionEnergy": {
-                        "7": "2",
-                        "22": "2",
-                        "24": "1.5"
-                    },
-                    "interactionRadius": {
-                        "7": "0.70710678",
-                        "22": "1",
-                        "24": "1"
-                    }
-                }
-            ]
+            "interactionEnergy": {
+                "7": "2",
+                "22": "2",
+                "24": "1.5"
+            },
+            "interactionRadius": {
+                "7": "0.70710678",
+                "22": "1",
+                "24": "1"
+            }
         },
         {
             "id": 22,
-            "lattices": [
-                {
-                    "name": "TiCrN",
-                    "interactionEnergy": {
-                        "7": "2",
-                        "22": "1",
-                        "24": "1"
-                    },
-                    "interactionRadius": {
-                        "7": "0.70710678",
-                        "22": "1",
-                        "24": "1"
-                    }
-                }
-            ]
+            "interactionEnergy": {
+                "7": "2",
+                "22": "1",
+                "24": "1"
+            },
+            "interactionRadius": {
+                "7": "0.70710678",
+                "22": "1",
+                "24": "1"
+            }
         },
         {
             "id": 24,
-            "lattices": [
-                {
-                    "name": "TiCrN",
-                    "interactionEnergy": {
-                        "7": "2",
-                        "22": "1",
-                        "24": "1"
-                    },
-                    "interactionRadius": {
-                        "7": "0.70710678",
-                        "22": "1",
-                        "24": "1"
-                    }
-                }
-            ]
+            "interactionEnergy": {
+                "7": "2",
+                "22": "1",
+                "24": "1"
+            },
+            "interactionRadius": {
+                "7": "0.70710678",
+                "22": "1",
+                "24": "1"
+            }
         }
     ],
     "deposition": {
@@ -88,74 +73,38 @@
         ]
     },
     "dimer": {
-        "lattices": {
-            "fcc": {
-                "translations": [
-                    [
-                        -1,
-                        -1,
-                        0
-                    ],
-                    [
-                        -1,
-                        1,
-                        0
-                    ],
-                    [
-                        1,
-                        -1,
-                        0
-                    ],
-                    [
-                        1,
-                        1,
-                        0
-                    ],
-                    [
-                        -1,
-                        0,
-                        -1
-                    ],
-                    [
-                        1,
-                        0,
-                        -1
-                    ],
-                    [
-                        0,
-                        -1,
-                        -1
-                    ],
-                    [
-                        0,
-                        1,
-                        -1
-                    ],
-                    [
-                        -1,
-                        0,
-                        1
-                    ],
-                    [
-                        1,
-                        0,
-                        1
-                    ],
-                    [
-                        0,
-                        -1,
-                        1
-                    ],
-                    [
-                        0,
-                        1,
-                        1
-                    ]
+        "lattices": [
+            {
+                "name": "TiCrN",
+                "numberOfAtoms": 2,
+                "elementPositions": [
+                    {
+                        "atomId": 1,
+                        "elementIds": [
+                            7
+                        ],
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0.5,
+                            "z": 0
+                        }
+                    },
+                    {
+                        "atomId": 2,
+                        "elementIds": [
+                            22,
+                            24
+                        ],
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        }
+                    }
                 ],
-                "rules": {
-                    "contact": 3
-                }
+                "translationRules": [],
+                "contact": 3
             }
-        }
+        ]
     }
 }

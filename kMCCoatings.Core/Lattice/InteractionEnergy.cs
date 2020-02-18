@@ -6,7 +6,6 @@ namespace kMCCoatings.Core.LatticeRoot
         ///  Массив id элементов, которым соответствует указанная энергия взаимодействия
         /// </summary>
         public int[] Elements { get; set; }
-
         public double Energy { get; set; }
     }
 }
