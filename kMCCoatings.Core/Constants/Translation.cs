@@ -5,7 +5,6 @@ namespace kMCCoatings.Core.Constants
 {
     public class Translation
     {
-
         /// <summary>
         /// Id атома в кристаллической рещётки
         /// </summary>
@@ -20,6 +19,5 @@ namespace kMCCoatings.Core.Constants
         /// Трансляции
         /// </summary>
         public Vector3D[] Translations { get; set; }
-
     }
 }

@@ -9,8 +9,6 @@ namespace kMCCoatings.Core.Entities.SiteRoot
 {
     public class Site
     {
-
-        public CalculatorSettings CalculatorSettings { get; set; }
         /// <summary>
         /// Координаты сайта.
         /// </summary>
@@ -20,6 +18,16 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// Состояние сайта
         /// </summary>
         public SiteStatus SiteStatus { get; set; }
+
+        /// <summary>
+        /// Причина запрёщенности сайта
+        /// </summary>
+        public ProhibitedReason ProhibitedReason { get; set; }
+
+        /// <summary>
+        /// Счётчик запрещённых атомов
+        /// </summary>
+        public int ForbiddenRAtoms { get; set; }
 
         /// <summary>
         /// Тип сайта
@@ -32,14 +40,14 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public Atom OccupiedAtom { get; set; }
 
         /// <summary>
-        /// Список всех элементов, которые могут окупировать этот сайт
+        /// В случае, есть сайт диммерный, то он определяется атомомом, которым сформирован сайт
         /// </summary>
-        public int[] AtomTypeIds { get; set; }
+        public Atom DimerAtom { get; set; }
 
         /// <summary>
-        /// Список соседних атомов у сайта
+        /// Список всех элементов, которые могут окупировать этот сайт
         /// </summary>
-        public List<Site> NeigborhoodsSite { get; set; } = new List<Site>();
+        public List<int> ElementIds { get; set; } = new List<int>();
 
         /// <summary>
         /// Словарь, который определяет энергия (value) атома заданного типа (key)
@@ -49,53 +57,31 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// <summary>
         /// Добавить атома в поле взаимодействия
         /// </summary>
-        public void AddSite(Site site)
+        public void AddAtomToInteractionField(Atom atom)
         {
-            if (!NeigborhoodsSite.Contains(site))
+            foreach (var elementId in atom.Element.InteractionEnergy)
             {
-                NeigborhoodsSite.Add(site);
-                // Энергию сайта обновляем только в том случае, если добавляемый сайт занят атомом и расстояние менее радиуса взаимодействия
-                if (site.SiteStatus == SiteStatus.Occupied && CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, Coordinates) <= CalculatorSettings.InteractionRadius)
+                if (Energies.ContainsKey(elementId.Key))
                 {
-                    foreach (var elementId in site.OccupiedAtom.Element.InteractionEnergy)
-                    {
-                        if (Energies.ContainsKey(elementId.Key))
-                        {
-                            Energies[elementId.Key] += site.OccupiedAtom.Element.InteractionEnergy[elementId.Key];
-                        }
-                        else
-                        {
-                            Energies.Add(elementId.Key, site.OccupiedAtom.Element.InteractionEnergy[elementId.Key]);
-                        }
-                    }
+                    Energies[elementId.Key] += atom.Element.InteractionEnergy[elementId.Key];
+                }
+                else
+                {
+                    Energies.Add(elementId.Key, atom.Element.InteractionEnergy[elementId.Key]);
                 }
             }
         }
 
         /// <summary>
-        /// Добавить список атомов в поле взаимодействия
+        /// Убрать атом из поля взаимодействия
         /// </summary>
-        public void AddSitesWithReverse(IEnumerable<Site> sites)
+        public void RemoveAtomFromInteractionField(Atom atom)
         {
-            if (sites != null)
+            foreach (var elementId in atom.Element.InteractionEnergy)
             {
-                foreach (var site in sites)
+                if (Energies.ContainsKey(elementId.Key))
                 {
-                    if (CalculatorSettings.Dimension.CalculateDistance(site.Coordinates, Coordinates) <= CalculatorSettings.ForbiddenRadius)
-                    {
-                        if (site.SiteStatus != SiteStatus.Occupied)
-                        {
-                            /// Если в результате добавления атома в соседи, расстояние до сайта меньше или равно минимальному радиусу, то стату сайта меням на запрещён
-                            site.SiteStatus = SiteStatus.Prohibited;
-                        }
-                        else
-                        {
-                            throw new System.Exception("Атомы находятся ближе предельного допустимого радиуса");
-                        }
-
-                    }
-                    site.AddSite(this);
-                    this.AddSite(site);
+                    Energies[elementId.Key] -= atom.Element.InteractionEnergy[elementId.Key];
                 }
             }
         }
@@ -106,6 +92,37 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         public double EnergyInSite(int elementId)
         {
             return Energies[elementId];
+        }
+
+        public void AddProhibitedReason(ProhibitedReason prohibitedReason)
+        {
+            if (ProhibitedReason == ProhibitedReason.None)
+            {
+                ProhibitedReason = prohibitedReason;
+            }
+            else if (ProhibitedReason != prohibitedReason)
+            {
+                ProhibitedReason = ProhibitedReason.All;
+            }
+            SiteStatus = SiteStatus.Prohibited;
+        }
+
+        public void RemoveProhibitedReason(ProhibitedReason prohibitedReason)
+        {
+            if (ProhibitedReason == ProhibitedReason.All)
+            {
+                ProhibitedReason = prohibitedReason == ProhibitedReason.ContactRule ? ProhibitedReason.ForbiddenRadius : ProhibitedReason.ContactRule;
+            }
+            else
+            {
+                ProhibitedReason = ProhibitedReason.None;
+                SiteStatus = SiteStatus.Vacanted;
+            }
+        }
+
+        public bool IsContactRuleProhibited()
+        {
+            return ProhibitedReason == ProhibitedReason.ContactRule || ProhibitedReason == ProhibitedReason.All;
         }
     }
 }

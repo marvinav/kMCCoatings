@@ -18,7 +18,6 @@ namespace kMCCoatings.Core.Extension
             return ((basicVector.X * vector.X) + (basicVector.Y * vector.Y) + (basicVector.Z * vector.Z)) / basicVector.Length() / vector.Length();
         }
 
-
         /// <summary>
         /// Возвращает повернутые векторы по указанной схеме в плоскости XY.
         /// </summary>
@@ -39,10 +38,10 @@ namespace kMCCoatings.Core.Extension
                 result.Add(new Vector3()
                 {
                     X = (float)Math.Round(cosInZ *
-                        (basicVector.X * Math.Cos(angleInRadXY) - basicVector.Y * Math.Sin(angleInRadXY)),
+                        ((basicVector.X * Math.Cos(angleInRadXY)) - (basicVector.Y * Math.Sin(angleInRadXY))),
                         precision),
                     Y = (float)Math.Round(cosInZ *
-                        (basicVector.X * Math.Sin(angleInRadXY) + basicVector.Y * Math.Cos(angleInRadXY)),
+                        ((basicVector.X * Math.Sin(angleInRadXY)) + (basicVector.Y * Math.Cos(angleInRadXY))),
                         precision),
                     Z = (float)Math.Round(lenght * sinInZ, precision)
                 });
@@ -70,10 +69,10 @@ namespace kMCCoatings.Core.Extension
                 result.Add(new Vector3()
                 {
                     X = (float)Math.Round(cosInZ *
-                        (basicVector.X * Math.Cos(angleInRadXY) - basicVector.Y * Math.Sin(angleInRadXY)),
+                        ((basicVector.X * Math.Cos(angleInRadXY)) - (basicVector.Y * Math.Sin(angleInRadXY))),
                         precision),
                     Y = (float)Math.Round(cosInZ *
-                        (basicVector.X * Math.Sin(angleInRadXY) + basicVector.Y * Math.Cos(angleInRadXY)),
+                        ((basicVector.X * Math.Sin(angleInRadXY)) + (basicVector.Y * Math.Cos(angleInRadXY))),
                         precision),
                     Z = (float)Math.Round(lenght * sinInZ, precision)
                 });
@@ -111,7 +110,6 @@ namespace kMCCoatings.Core.Extension
         /// </summary>
         public static double CalculateDistance(this Point3D dimension, Point3D first, Point3D second)
         {
-            double distance;
             if (Math.Abs(second.X - first.X) > dimension.X / 2
                 || Math.Abs(second.Y - first.Y) > dimension.Y / 2)
             {
@@ -122,16 +120,15 @@ namespace kMCCoatings.Core.Extension
                 (moreY, lessY) = first.Y > second.Y
                                         ? (first.Y, second.Y)
                                         : (second.Y, first.Y);
-                distance = new Vector3D(
-                            dimension.X - moreX + lessX,
-                            dimension.Y - moreY + lessY,
-                            second.Z - first.Z).Length;
+                return new Vector3D(
+                             dimension.X - moreX + lessX,
+                             dimension.Y - moreY + lessY,
+                             second.Z - first.Z).Length;
             }
             else
             {
-                distance = first.DistanceTo(second);
+                return first.DistanceTo(second);
             }
-            return distance;
         }
 
         public static Point3D TranslatePointInDimension(this Point3D dimension, Point3D point)
@@ -148,7 +145,16 @@ namespace kMCCoatings.Core.Extension
             var elementEnergies = energies.Where(e => e.Elements.Contains(elementId));
             //TODO: сделать формирование словаря энергий для каждого атома
             return null;
+        }
 
+        public static Point3D Round(this Point3D point, int precision = 5)
+        {
+            return new Point3D(Math.Round(point.X, precision), Math.Round(point.Y, precision), Math.Round(point.Z, precision));
+        }
+
+        public static Vector3D Round(this Vector3D point, int precision = 5)
+        {
+            return new Vector3D(Math.Round(point.X, precision), Math.Round(point.Y, precision), Math.Round(point.Z, precision));
         }
     }
 }

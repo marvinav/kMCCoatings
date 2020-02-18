@@ -19,10 +19,6 @@ namespace kMCCoatings.Core.Configuration
         ///</summary>
         public Lattice[] Lattices { get; set; }
 
-
-        public List<InteractionEnergy> InteractionEnergies { get; set; }
-        public Dictionary<int, Dictionary<int, List<InteractionEnergy>>> InteractionEnergiesByElementId { get; set; }
-
         /// <summary>
         /// Создает связь между атомами, если это разрешено
         /// </summary>

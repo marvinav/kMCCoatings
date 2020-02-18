@@ -8,7 +8,6 @@ namespace kMCCoatings.Core.LatticeRoot
     /// </summary>
     public class Translation
     {
-
         /// <summary>
         /// Id атома в кристаллической рещётки
         /// </summary>
@@ -28,6 +27,5 @@ namespace kMCCoatings.Core.LatticeRoot
         /// Трансляции
         /// </summary>
         public Vector3D[] Translations { get; set; }
-
     }
 }

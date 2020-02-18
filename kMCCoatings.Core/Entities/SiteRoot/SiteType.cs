@@ -8,6 +8,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
     {
         Lattice,
         Dimer,
-        Free
+        Free,
+        New
     }
 }

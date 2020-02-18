@@ -42,7 +42,7 @@ namespace kMCCoatings.Core.Entities
                 throw new ArgumentOutOfRangeException("Координата клетки Z < 0");
             }
         }
-    
+
         /// <summary>
         /// Получить вектор по двум точкам
         /// </summary>

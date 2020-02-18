@@ -2,12 +2,12 @@
 using kMCCoatings.Core;
 namespace kMCCoatings.Console
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             System.Console.WriteLine("Hello World!");
-            if(args != null)
+            if (args != null)
             {
                 System.Console.WriteLine(args[0]);
             }

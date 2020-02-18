@@ -5,6 +5,5 @@ namespace kMCCoatings.Core.LatticeRoot
         public int[] Elements { get; set; }
 
         public double Energy { get; set; }
-
     }
 }

@@ -19,6 +19,7 @@ using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Xunit;
 
+
 namespace kMCCoatings.Test
 {
     public class UnitTest : Test
@@ -26,15 +27,11 @@ namespace kMCCoatings.Test
         [Fact]
         public void LatticeFromJSON()
         {
-            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
-            using (var fs = new FileStream(path, FileMode.Open))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    var fileContent = sr.ReadToEnd();
-                    var result = DimerSettings.GetLatticeFromJson(fileContent);
-                }
-            }
+            const string path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            using var fs = new FileStream(path, FileMode.Open);
+            using var sr = new StreamReader(fs);
+            var fileContent = sr.ReadToEnd();
+            var result = DimerSettings.GetLatticeFromJson(fileContent);
         }
 
         [Fact]
@@ -96,38 +93,55 @@ namespace kMCCoatings.Test
                     {24, 0.70710678}
                 }
             };
-            var cals = new CalculatorSettings()
+            var calсSettings = new CalculatorSettings()
             {
                 Dimension = new Point3D(100, 100, 100),
-                ContactRadius = 1.25,
+                ContactRadius = 1.3,
                 CrossRadius = 3,
-                ForbiddenRadius = 0.707,
+                ForbiddenRadius = 0.5,
                 DiffusionRadius = 1,
-                InteractionRadius = 2
+                InteractionRadius = 2,
+                ContactRule = 3
             };
-            var cacl = new Calculator(cals);
+            var calc = new Calculator(new Settings() { Calculator = calсSettings });
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            for (int x = 0; x < 100; x++)
+            var O = new Point3D(10, 10, 10);
+            var z1 = new Point3D(10, 10, 11);
+            var z_1 = new Point3D(10, 10, 9);
+            var y1 = new Point3D(10, 11, 10);
+            var y_1 = new Point3D(10, 9, 10);
+            var z2 = new Point3D(10, 10, 12);
+            calc.AddAtom(O, n);
+            calc.AddAtom(z1, n);
+            calc.AddAtom(z_1, n);
+            calc.AddAtom(y1, n);
+            calc.AddAtom(y_1, n);
+            // calc.AddAtom(z2, n);
+            var lists = Newtonsoft.Json.JsonConvert.SerializeObject(calc.SiteService.SitesByCells.SelectMany(x => x.Value).ToList().Select(x => new { Coor = x.Coordinates, Dimer = x.DimerAtom?.Site.Coordinates, Occupied = x.OccupiedAtom?.Site.Coordinates, Reason = x.ProhibitedReason }));
+
+            Debug.Print(lists);
+            int numberOfSites = 0;
+            foreach (var cell in calc.SiteService.SitesByCells.Values)
             {
-                for (int y = 0; y < 100; y++)
-                {
-                    for (int z = 0; z < 100; z++)
-                    {
-                        var curPont = new Point3D(x, y, z);
-                        cacl.AddAtom(curPont, n);
-                    }
-                }
+                numberOfSites += cell.Count;
             }
+            int numberOfTransition = 0;
+            foreach (var trans in calc.Transitions.Values)
+            {
+                numberOfTransition += trans.Count;
+            }
+            Assert.True(numberOfSites == 21);
+            Assert.True(numberOfTransition == 16);
             stopWatch.Stop();
-            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
+            Console.WriteLine($"Elapsed time: {stopWatch.ElapsedMilliseconds}");
         }
 
         [Fact]
         public void IsContains()
         {
-            var lattice = DimerSettings.Lattices.First();
+            var lattice = DimerSettings.Lattices[0];
             Assert.True(lattice.IsContains(firstAtomInDimer.Element.Id, secondAtomInDimer.Element.Id));
             Assert.True(lattice.IsContains(22, 22));
             Assert.True(lattice.IsContains(22, 24));
@@ -142,49 +156,18 @@ namespace kMCCoatings.Test
         }
 
         /// <summary>
-        /// Проверка формирования списка транслиций
+        /// Проверка формирования списка трансляции
         /// </summary>
         [Fact]
         public void CreateVectorFromMath()
         {
-
-            CoordinateSystem cs = new CoordinateSystem();
-            Vector3D vect = new Vector3D(2, 3, 1);
-            var rotationVect = new Vector3D(1, -1, 1);
+            Vector3D vector = new Vector3D(2, 3, 1);
+            var rotationVector = new Vector3D(1, -1, 1);
             var a = Angle.FromDegrees(355);
 
-            var resultedVector = vect.Rotate(rotationVect, a);
+            var resultedVector = vector.Rotate(rotationVector, a);
             Console.WriteLine(resultedVector.ToString());
             Assert.True(false);
-        }
-
-
-        [Fact]
-        public void SelectBenchmark()
-        {
-            var points = new List<Atom>(1000000);
-            var rnd = new Random();
-            var counter = 0;
-
-            for (int i = 0; i < 1000000; i++)
-            {
-                var x = rnd.Next(0, 100000);
-                var y = rnd.Next(0, 100000);
-                var z = rnd.Next(0, 100000);
-                counter++;
-                points.Add(new Atom()
-                {
-                    Site = new Site(),
-                    Transitions = new List<Transition>(50)
-                });
-            };
-
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            var atom = points[1000];
-            Point3D dimension = new Point3D(100, 100, 100);
-            stopWatch.Stop();
-            Console.WriteLine($"Ellapsed time: {stopWatch.ElapsedMilliseconds}");
         }
 
         [Fact]
@@ -192,7 +175,14 @@ namespace kMCCoatings.Test
         {
             //TODO: Выполнить тест диффузии заданного количества атомов без потока.
         }
+
+        [Fact]
+        public void LoadJsonSettings()
+        {
+            var calc = CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\kmcCoatings.Test\\settings.json");
+        }
     }
+
     public class Test
     {
         public DimerSettings DimerSettings = new DimerSettings();
@@ -215,31 +205,12 @@ namespace kMCCoatings.Test
                 Id = 7
             };
 
-            firstAtomInDimer = new Atom()
+            const string path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
+            using var fs = new FileStream(path, FileMode.Open);
+            using (var sr = new StreamReader(fs))
             {
-                Element = chrome,
-                Site = new Site()
-                {
-                    Coordinates = new Point3D(0, 0, 0)
-                }
-            };
-            secondAtomInDimer = new Atom()
-            {
-                Element = titanium,
-                Site = new Site()
-                {
-                    Coordinates = new Point3D(1, 1, 0)
-                }
-            };
-
-            var path = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Core\Lattice\fcc.json";
-            using (var fs = new FileStream(path, FileMode.Open))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    var fileContent = sr.ReadToEnd();
-                    DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
-                }
+                var fileContent = sr.ReadToEnd();
+                DimerSettings.Lattices = DimerSettings.GetLatticeFromJson(fileContent);
             }
         }
     }
