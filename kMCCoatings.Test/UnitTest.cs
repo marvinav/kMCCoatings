@@ -39,26 +39,12 @@ namespace kMCCoatings.Test
             Assert.False(lattice.IsContains(7, 7));
         }
 
-        /// <summary>
-        /// Проверка формирования списка трансляции
-        /// </summary>
-        [Fact]
-        public void CreateVectorFromMath()
-        {
-            Vector3D vector = new Vector3D(2, 3, 1);
-            var rotationVector = new Vector3D(1, -1, 1);
-            var a = Angle.FromDegrees(355);
-
-            var resultedVector = vector.Rotate(rotationVector, a);
-            Console.WriteLine(resultedVector.ToString());
-            Assert.True(false);
-        }
-
         [Fact]
         public void LoadJsonSettings()
         {
             var calc = CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\kmcCoatings.Test\\settings.json");
             Assert.True(calc != null);
+            Assert.True(calc.Settings.Dimer.Lattices.Length > 0);
         }
     }
 
@@ -66,12 +52,11 @@ namespace kMCCoatings.Test
     {
         public Calculator Calculator { get; set; }
         public static List<Dimer> dimers = new List<Dimer>();
-        const string settingsPath = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Test\settings.json";
+        private const string settingsPath = @"C:\Users\av_ch\source\repos\kMCCoatings\kMCCoatings.Test\settings.json";
 
         public Test()
         {
             Calculator = CalculatorFabric.CreateCalculator(settingsPath);
-
         }
     }
 }

@@ -22,14 +22,14 @@ namespace kMCCoatings.Core.Extension
         /// Возвращает повернутые векторы по указанной схеме в плоскости XY.
         /// </summary>
         /// <param name="schemes">
-        /// Схема поврота, которая состоит уз положительного угла в градусах (>0) 
+        /// Схема поворота, которая состоит уз положительного угла в градусах (>0) 
         /// Угол поднятия по оси z
         /// </param>
         /// <param name="precision"> Точность округления </param>
         public static List<Vector3> RotatesInXYPlane(this Vector3 basicVector, List<(double, double)> schemes, int precision = 5)
         {
             var result = new List<Vector3>();
-            var lenght = basicVector.Length();
+            var length = basicVector.Length();
             foreach (var scheme in schemes)
             {
                 var angleInRadXY = Math.PI * scheme.Item1 / 180.0000f;
@@ -43,7 +43,7 @@ namespace kMCCoatings.Core.Extension
                     Y = (float)Math.Round(cosInZ *
                         ((basicVector.X * Math.Sin(angleInRadXY)) + (basicVector.Y * Math.Cos(angleInRadXY))),
                         precision),
-                    Z = (float)Math.Round(lenght * sinInZ, precision)
+                    Z = (float)Math.Round(length * sinInZ, precision)
                 });
             }
             return result;
@@ -53,14 +53,14 @@ namespace kMCCoatings.Core.Extension
         /// Возвращает повернутые векторы по указанной схеме в плоскости XY.
         /// </summary>
         /// <param name="schemes">
-        /// Схема поврота, которая состоит уз положительного угла в градусах (>0) 
+        /// Схема поворота, которая состоит уз положительного угла в градусах (>0) 
         /// Угол поднятия по оси z, и коэффициента уменьшения длины вектора
         /// </param>
         /// <param name="precision"> Точность округления </param>
         public static List<Vector3> RotatesInXYPlaneAndShrink(this Vector3 basicVector, List<(double, double, double)> schemes, int precision = 5)
         {
             var result = new List<Vector3>();
-            var lenght = basicVector.Length();
+            var length = basicVector.Length();
             foreach (var scheme in schemes)
             {
                 var angleInRadXY = Math.PI * scheme.Item1 / 180.0000f;
@@ -74,7 +74,7 @@ namespace kMCCoatings.Core.Extension
                     Y = (float)Math.Round(cosInZ *
                         ((basicVector.X * Math.Sin(angleInRadXY)) + (basicVector.Y * Math.Cos(angleInRadXY))),
                         precision),
-                    Z = (float)Math.Round(lenght * sinInZ, precision)
+                    Z = (float)Math.Round(length * sinInZ, precision)
                 });
             }
             return result;
@@ -83,13 +83,9 @@ namespace kMCCoatings.Core.Extension
         /// <summary>
         /// Преобразует крист.направление в вектор в глобальных координатах
         /// </summary>
-        public static Vector3D ParseVectorInGlobal(this CoordinateSystem cs, string vector)
+        public static Vector3D ParseVectorInGlobal(this CoordinateSystem cs, Vector3D vector)
         {
-            var vectors = vector.Split(" ");
-            var coefX = Convert.ToDouble(vectors[1]);
-            var coefY = Convert.ToDouble(vectors[2]);
-            var coefZ = Convert.ToDouble(vectors[3]);
-            return (coefX * cs.XAxis) + (coefY * cs.YAxis) + (coefZ * cs.ZAxis);
+            return (vector.X * cs.XAxis) + (vector.Y * cs.YAxis) + (vector.Z * cs.ZAxis);
         }
 
         /// <summary>

@@ -44,7 +44,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
         /// </summary>
         /// <param name="firstAtom"></param>
         /// <param name="secondAtom"></param>
-
         public Dimer(Atom firstAtom, Atom secondAtom, DimerSettings dimerSettings)
         {
             // Инициализация димера            
@@ -64,17 +63,6 @@ namespace kMCCoatings.Core.Entities.DimerRoot
 
             // Расчёт трансляций димера
             Translations = null;
-        }
-
-        /// <summary>
-        /// Расчёт трансляций диммера в глобальные системы координат
-        /// </summary>
-        /// <param name="dimer"></param>
-        /// <param name="dimerSettings"></param>
-        private static List<Vector3> CalculateTranslations(Vector3 basicVector, DimerSettings dimerSettings)
-        {
-            //TODO: Получить список трансляций для димера в глобальных системах координат
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,3 +1,5 @@
+using MathNet.Spatial.Euclidean;
+
 namespace kMCCoatings.Core.LatticeRoot
 {
     public class AtomsRelation
@@ -6,6 +8,6 @@ namespace kMCCoatings.Core.LatticeRoot
 
         public int SecondAtomId { get; set; }
 
-        public string Direction { get; set; }
+        public Vector3D Direction { get; set; }
     }
 }
