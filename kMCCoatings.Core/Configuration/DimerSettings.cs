@@ -37,7 +37,6 @@ namespace kMCCoatings.Core.Configuration
             return result;
         }
 
-
         #region Инфраструктура
         public static Lattice[] GetLatticeFromJson(string json) => JsonConvert.DeserializeObject<DimerSettings>(json, GetJsonConvert()).Lattices;
 

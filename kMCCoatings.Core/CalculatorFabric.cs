@@ -23,17 +23,14 @@ namespace kMCCoatings.Core
 
         public static bool ValidateConcentrationFlow(Settings settings)
         {
-            var elementIds = settings.Dimer.Lattices.Select(x => x.).ToList();
-
-            foreach (var id in elementIds)
+            var flow = settings.Deposition.ConcentrationFlow;
+            for (int i = 1; i < flow.Length; i++)
             {
-                for (int step = 0; step < settings.De.ConcentrationFlow.Length; step++)
+                var prev = flow[i - 1].OrderBy(x => x.ElementId).Select(x => x.ElementId);
+                var current = flow[i].OrderBy(x => x.ElementId).Select(x => x.ElementId);
+                if (!prev.Intersect(current).Any())
                 {
-                    var elementConcentration = settings.De.ConcentrationFlow[step];
-                    if (Array.Find(elementConcentration, x => x.ElementId == id) == null)
-                    {
-                        throw new Exception($"У элемента {id} не задана концентрация на участке {step}");
-                    }
+                    throw new Exception($"На участке {i} нарушена концентрационная зависимость.");
                 }
             }
             return true;
