@@ -1,6 +1,7 @@
 ﻿using kMCCoatings.Core.Configuration;
 using kMCCoatings.Core.Entities;
 using kMCCoatings.Core.Entities.AtomRoot;
+using kMCCoatings.Core.Entities.DepositionRoot;
 using kMCCoatings.Core.Entities.SiteRoot;
 using kMCCoatings.Core.Extension;
 using MathNet.Spatial.Euclidean;
@@ -53,26 +54,12 @@ namespace kMCCoatings.Core
         /// </summary>
         public SiteService SiteService { get; set; }
 
+        public Deposition Deposition { get; set; }
+
         public Calculator(Settings settings)
         {
             Settings = settings;
-        }
-
-        /// <summary>
-        /// Обновляем состояние атомов
-        /// </summary>
-        public void UpdateAtomsState()
-        {
-            // Parallel.ForEach(AffectedAtoms, afAtoms =>
-            // {
-            //     afAtoms.Neighborhoods = Atoms.Where(at => at.CalculateDistance(afAtoms) <= CrossRadius).ToList();
-            //     afAtoms.Site = new Site()
-            //     {
-            //         Coordinates = afAtoms.Coordinate,
-            //         OccupiedAtom = afAtoms,
-            //         SiteStatus = SiteStatus.Occupied
-            //     };
-            // });
+            Deposition = new Deposition(settings.Deposition.ConcentrationFlow);
         }
 
         /// <summary>
@@ -180,11 +167,6 @@ namespace kMCCoatings.Core
                 }
             }
             return transitions;
-        }
-
-        public void MakeTransition(Transition transition)
-        {
-            throw new NotImplementedException();
         }
     }
 }
