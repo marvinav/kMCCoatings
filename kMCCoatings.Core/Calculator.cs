@@ -76,7 +76,7 @@ namespace kMCCoatings.Core
             var elements = new List<Element>();
             foreach (var element in flows)
             {
-                for (int i = 0; i < element.Concentration)
+                for (int i = 0; i < element.Concentration; i++)
                 {
                     elements.Add(element.Element);
                 }
