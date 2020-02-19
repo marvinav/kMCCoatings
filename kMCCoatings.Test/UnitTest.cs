@@ -46,6 +46,12 @@ namespace kMCCoatings.Test
             Assert.True(calc != null);
             Assert.True(calc.Settings.Dimer.Lattices.Length > 0);
         }
+
+        [Fact]
+        public void Deposit()
+        {
+            Calculator.Deposit();
+        }
     }
 
     public class Test

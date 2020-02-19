@@ -13,6 +13,7 @@ namespace kMCCoatings.Core
     {
         public Dictionary<Point3D, List<Site>> SitesByCells { get; set; }
         public CalculatorSettings CalculatorSettings { get; set; }
+        public int HighestNotEmptyCell { get; set; }
 
         public SiteService(CalculatorSettings calcSet)
         {
@@ -22,28 +23,7 @@ namespace kMCCoatings.Core
 
         public List<Site> GetSites(Point3D coord)
         {
-            var pX = (int)Math.Floor(coord.X);
-            var pY = (int)Math.Floor(coord.Y);
-            var pZ = (int)Math.Floor(coord.Z);
-            var crossR = (int)CalculatorSettings.CrossRadius;
-            var zLeft = pZ - crossR < 0 ? 0 : pZ - crossR;
-            var zRight = pZ + crossR > (int)CalculatorSettings.Dimension.Z ? (int)CalculatorSettings.Dimension.Z : pZ + crossR;
-
-            var result = new List<Site>();
-            for (int x = pX - crossR; x <= pX + crossR; x++)
-            {
-                for (int y = pY - crossR; y <= pY + crossR; y++)
-                {
-                    for (int z = zLeft; z <= zRight; z++)
-                    {
-                        if (SitesByCells.TryGetValue(CalculatorSettings.Dimension.TranslatePointInDimension(new Point3D(x, y, z)), out var sites))
-                        {
-                            result.AddRange(sites);
-                        }
-                    }
-                }
-            }
-            return result;
+            return GetSites(coord, (int)CalculatorSettings.CrossRadius);
         }
 
         /// <summary>
@@ -172,6 +152,39 @@ namespace kMCCoatings.Core
             site.SiteStatus = prohibitedReason != ProhibitedReason.None ? SiteStatus.Prohibited : SiteStatus.Vacanted;
 
             return site;
+        }
+
+        /// <summary>
+        /// Получить список доступной поверхности
+        /// </summary>
+        public Point3D[] GetCellOnSurface(int density)
+        {
+            var availableCells = new Point3D[density];
+            int generated = 0;
+            var rnd = new Random();
+            while (generated < density)
+            {
+                var x = rnd.Next((int)CalculatorSettings.Dimension.X);
+                var y = rnd.Next((int)CalculatorSettings.Dimension.Y);
+                var point = new Point3D(x, y, HighestNotEmptyCell);
+                var isEmpty = true;
+                while (isEmpty)
+                {
+                    var sitesInPoint = GetSites(point, 1);
+                    if (sitesInPoint.Any(x => x.SiteStatus == SiteStatus.Occupied))
+                    {
+                        point = new Point3D(x, y, point.Z + 1);
+                        isEmpty = false;
+                    }
+                    else
+                    {
+                        point = new Point3D(x, y, point.Z - 1);
+                    }
+                }
+                availableCells[generated] = point;
+                generated++;
+            }
+            return availableCells;
         }
     }
 }

@@ -50,5 +50,6 @@ namespace kMCCoatings.Core.Configuration
         /// Минимальное количество связей для определения доступности сайта
         /// </summary>
         public int ContactRule { get; set; }
+
     }
 }

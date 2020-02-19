@@ -6,7 +6,7 @@ using kMCCoatings.Core.Entities.AtomRoot;
 namespace kMCCoatings.Core.Entities.DepositionRoot
 {
     /// <summary>
-    /// Концентрация элемента на i-ом шаге иттерации
+    /// Концентрация элемента на i-ом шаге итерации
     /// </summary>
     public class ElementConcentration
     {
@@ -16,8 +16,13 @@ namespace kMCCoatings.Core.Entities.DepositionRoot
         public int Concentration { get; set; }
 
         /// <summary>
-        /// Элемент
+        /// Id элемента
         /// </summary>
         public int ElementId { get; set; }
+
+        /// <summary>
+        /// Элемент
+        /// </summary>
+        public Element Element { get; set; }
     }
 }

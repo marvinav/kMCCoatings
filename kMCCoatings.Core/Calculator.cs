@@ -67,6 +67,25 @@ namespace kMCCoatings.Core
         /// </summary>
         public void Start()
         {
+
+        }
+
+        public void Deposit()
+        {
+            var flows = Deposition.MakeStep();
+            var elements = new List<Element>();
+            foreach (var element in flows)
+            {
+                for (int i = 0; i < element.Concentration)
+                {
+                    elements.Add(element.Element);
+                }
+            }
+            var availableCells = SiteService.GetCellOnSurface(flows.Length);
+            for (int i = 0; i < availableCells.Length; i++)
+            {
+                AddAtom(availableCells[i], elements[i]);
+            }
         }
 
         /// <summary>

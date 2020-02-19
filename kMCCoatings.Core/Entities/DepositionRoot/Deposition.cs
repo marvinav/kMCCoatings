@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using kMCCoatings.Core.Entities.AtomRoot;
+using kMCCoatings.Core.Entities.SiteRoot;
+using MathNet.Spatial.Euclidean;
 
 namespace kMCCoatings.Core.Entities.DepositionRoot
 {
@@ -38,6 +40,13 @@ namespace kMCCoatings.Core.Entities.DepositionRoot
         {
             _step = _step == _maxStep ? 0 : _step + 1;
             return _concentrationFlow[_step];
+        }
+
+        public Site[] DepositeAtoms(Point3D[] availableSpace)
+        {
+            var depositedAtoms = new Site[availableSpace.Length];
+
+            return depositedAtoms;
         }
     }
 }
