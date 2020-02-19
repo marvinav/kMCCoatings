@@ -51,6 +51,23 @@ namespace kMCCoatings.Test
         public void Deposit()
         {
             Calculator.Deposit();
+            var depositedAtoms = new List<Site>();
+            var occupiedCells = Calculator.SiteService.SitesByCells.
+                Where(x => x.Value.Count > 0).
+                Select(x => x.Value).
+                Where(x => x.Any(y => y.SiteStatus == SiteStatus.Occupied));
+            foreach (var sites in occupiedCells)
+            {
+                depositedAtoms.AddRange(sites.Where(x => x.SiteStatus == SiteStatus.Occupied));
+            }
+            foreach (var flow in Calculator.Settings.Deposition.ConcentrationFlow[0])
+            {
+                Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == flow.ElementId) == flow.Concentration);
+            }
+            // foreach (var element in Calculator.Settings.Deposition.ConcentrationFlow[0])
+            // {
+            //     Assert.True(Calculator.Atoms.Count(x => x.Element.Id == element.Element.Id) == element.Concentration);
+            // }
         }
     }
 

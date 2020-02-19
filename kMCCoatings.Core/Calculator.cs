@@ -60,6 +60,7 @@ namespace kMCCoatings.Core
         {
             Settings = settings;
             Deposition = new Deposition(settings.Deposition.ConcentrationFlow);
+            SiteService = new SiteService(settings.Calc);
         }
 
         /// <summary>
@@ -81,10 +82,10 @@ namespace kMCCoatings.Core
                     elements.Add(element.Element);
                 }
             }
-            var availableCells = SiteService.GetCellOnSurface(flows.Length);
+            var availableCells = SiteService.GetCellOnSurface(elements.Count);
             for (int i = 0; i < availableCells.Length; i++)
             {
-                AddAtom(availableCells[i], elements[i]);
+                // AddAtom(availableCells[i], elements[i]);
             }
         }
 

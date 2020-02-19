@@ -160,29 +160,44 @@ namespace kMCCoatings.Core
         public Point3D[] GetCellOnSurface(int density)
         {
             var availableCells = new Point3D[density];
-            int generated = 0;
+            var generated = new List<Point3D>(density);
+            int count = 0, valid = 0;
             var rnd = new Random();
-            while (generated < density)
+            while (valid <= density - 1)
             {
-                var x = rnd.Next((int)CalculatorSettings.Dimension.X);
-                var y = rnd.Next((int)CalculatorSettings.Dimension.Y);
-                var point = new Point3D(x, y, HighestNotEmptyCell);
-                var isEmpty = true;
-                while (isEmpty)
+                int x, y;
+                do
                 {
-                    var sitesInPoint = GetSites(point, 1);
-                    if (sitesInPoint.Any(x => x.SiteStatus == SiteStatus.Occupied))
+                    x = rnd.Next((int)CalculatorSettings.Dimension.X);
+                    y = rnd.Next((int)CalculatorSettings.Dimension.Y);
+                }
+                while (generated.Any(p => p.X == x && p.Y == y));
+                generated.Add(new Point3D(x, y, HighestNotEmptyCell));
+                var isCellFree = true;
+                while (isCellFree)
+                {
+                    isCellFree = !GetSites(generated[count], 1).Any(x => x.SiteStatus == SiteStatus.Occupied);
+                    if (generated[count].Z < 0)
                     {
-                        point = new Point3D(x, y, point.Z + 1);
-                        isEmpty = false;
+                        generated[count] = new Point3D(x, y, 0);
+                        break;
+                    }
+                    else if (!isCellFree)
+                    {
+                        generated[count] = new Point3D(x, y, generated[count].Z + 1);
+                        break;
                     }
                     else
                     {
-                        point = new Point3D(x, y, point.Z - 1);
+                        generated[count] = new Point3D(x, y, generated[count].Z - 1);
                     }
                 }
-                availableCells[generated] = point;
-                generated++;
+                if (isCellFree)
+                {
+                    availableCells[valid] = generated[count];
+                    valid++;
+                }
+                count++;
             }
             return availableCells;
         }
