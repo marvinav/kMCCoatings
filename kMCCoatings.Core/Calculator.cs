@@ -85,7 +85,7 @@ namespace kMCCoatings.Core
             var availableCells = SiteService.GetCellOnSurface(elements.Count);
             for (int i = 0; i < availableCells.Length; i++)
             {
-                // AddAtom(availableCells[i], elements[i]);
+                AddAtom(availableCells[i], elements[i]);
             }
         }
 
