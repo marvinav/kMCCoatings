@@ -1,4 +1,5 @@
 {
+    "rndSeed": 1,
     "calculator": {
         "dimension": {
             "x": 20,
@@ -70,6 +71,244 @@
                 {
                     "elementId": 24,
                     "concentration": 8
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
+                }
+            ],
+            [
+                {
+                    "elementId": 7,
+                    "concentration": 18
+                },
+                {
+                    "elementId": 22,
+                    "concentration": 6
+                },
+                {
+                    "elementId": 24,
+                    "concentration": 12
                 }
             ],
             [

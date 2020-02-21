@@ -45,13 +45,17 @@ namespace kMCCoatings.Test
             var calc = CalculatorFabric.CreateCalculator("C:\\Users\\av_ch\\source\\repos\\kmcCoatings\\kmcCoatings.Test\\settings.json");
             Assert.True(calc != null);
             Assert.True(calc.Settings.Dimer.Lattices.Length > 0);
+            Assert.True(calc.Settings.RndSeed == 1);
         }
 
         [Fact]
         public void Deposit()
         {
-            Calculator.Deposit();
             var depositedAtoms = new List<Site>();
+            for (int i = 0; i < Calculator.Settings.Deposition.ConcentrationFlow.Length; i++)
+            {
+                Calculator.Deposit();
+            }
             var occupiedCells = Calculator.SiteService.SitesByCells.
                 Where(x => x.Value.Count > 0).
                 Select(x => x.Value).
@@ -60,9 +64,24 @@ namespace kMCCoatings.Test
             {
                 depositedAtoms.AddRange(sites.Where(x => x.SiteStatus == SiteStatus.Occupied));
             }
-            foreach (var flow in Calculator.Settings.Deposition.ConcentrationFlow[0])
+            // foreach (var flow in Calculator.Settings.Deposition.ConcentrationFlow)
+            // {
+            //     Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == flow.ElementId) == flow.Concentration);
+            // }
+            foreach (var site in Calculator.Atoms.Select(x => x.Site.Coordinates))
             {
-                Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == flow.ElementId) == flow.Concentration);
+                var count = 0;
+                foreach (var s in Calculator.Atoms.Select(x => x.Site.Coordinates))
+                {
+                    if (s.X == site.X && site.Y == s.Y && site.Z == s.Z)
+                    {
+                        count++;
+                    }
+                    if (count > 1)
+                    {
+                        var a = s;
+                    }
+                }
             }
         }
     }

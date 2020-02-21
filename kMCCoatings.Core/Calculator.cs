@@ -60,7 +60,7 @@ namespace kMCCoatings.Core
         {
             Settings = settings;
             Deposition = new Deposition(settings.Deposition.ConcentrationFlow);
-            SiteService = new SiteService(settings.Calc);
+            SiteService = new SiteService(settings);
         }
 
         /// <summary>

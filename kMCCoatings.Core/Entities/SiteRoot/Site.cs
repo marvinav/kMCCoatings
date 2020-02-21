@@ -91,7 +91,7 @@ namespace kMCCoatings.Core.Entities.SiteRoot
         /// </summary>
         public double EnergyInSite(int elementId)
         {
-            return Energies[elementId];
+            return Energies.ContainsKey(elementId) ? Energies[elementId] : 0;
         }
 
         public void AddProhibitedReason(ProhibitedReason prohibitedReason)

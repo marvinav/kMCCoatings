@@ -12,18 +12,18 @@ namespace kMCCoatings.Core
     public class SiteService
     {
         public Dictionary<Point3D, List<Site>> SitesByCells { get; set; }
-        public CalculatorSettings CalculatorSettings { get; set; }
-        public int HighestNotEmptyCell { get; set; }
+        public Settings Settings { get; set; }
+        public double HighestNotEmptyCell { get; set; }
 
-        public SiteService(CalculatorSettings calcSet)
+        public SiteService(Settings set)
         {
-            CalculatorSettings = calcSet;
+            Settings = set;
             SitesByCells = new Dictionary<Point3D, List<Site>>();
         }
 
         public List<Site> GetSites(Point3D coord)
         {
-            return GetSites(coord, (int)CalculatorSettings.CrossRadius);
+            return GetSites(coord, (int)Settings.Calc.CrossRadius);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace kMCCoatings.Core
             var pY = (int)Math.Floor(coord.Y);
             var pZ = (int)Math.Floor(coord.Z);
             var zLeft = pZ - radius < 0 ? 0 : pZ - radius;
-            var zRight = pZ + radius > (int)CalculatorSettings.Dimension.Z ? (int)CalculatorSettings.Dimension.Z : pZ + radius;
+            var zRight = pZ + radius > (int)Settings.Calc.Dimension.Z ? (int)Settings.Calc.Dimension.Z : pZ + radius;
 
             var result = new List<Site>();
             for (int x = pX - radius; x <= pX + radius; x++)
@@ -44,7 +44,7 @@ namespace kMCCoatings.Core
                 {
                     for (int z = zLeft; z <= zRight; z++)
                     {
-                        if (SitesByCells.TryGetValue(CalculatorSettings.Dimension.TranslatePointInDimension(new Point3D(x, y, z)), out var sites))
+                        if (SitesByCells.TryGetValue(Settings.Calc.Dimension.TranslatePointInDimension(new Point3D(x, y, z)), out var sites))
                         {
                             result.AddRange(sites);
                         }
@@ -99,7 +99,7 @@ namespace kMCCoatings.Core
             var scaledDirection = direction.ScaleBy(firstAtom.Element.InteractionRadius[secondAtom.Element.Id] / direction.Length).Round();
 
             // Если вектор диффузии превышает максимальный радиус диффузии, то атомы не формируют сайты
-            if (direction.Length - scaledDirection.Length <= CalculatorSettings.DiffusionRadius)
+            if (direction.Length - scaledDirection.Length <= Settings.Calc.DiffusionRadius)
             {
                 var firstToSecond = firstAtom.Site.Coordinates + scaledDirection;
                 var secondToFirst = secondAtom.Site.Coordinates - scaledDirection;
@@ -128,22 +128,22 @@ namespace kMCCoatings.Core
             var numberOfContact = 0;
             foreach (var nSite in neighborhoods.Where(x => x.SiteStatus == SiteStatus.Occupied))
             {
-                var dist = CalculatorSettings.Dimension.CalculateDistance(nSite.Coordinates, coor);
-                if (dist <= CalculatorSettings.ForbiddenRadius && nSite.OccupiedAtom != dimerAtom)
+                var dist = Settings.Calc.Dimension.CalculateDistance(nSite.Coordinates, coor);
+                if (dist <= Settings.Calc.ForbiddenRadius && nSite.OccupiedAtom != dimerAtom)
                 {
                     forbRadius = true;
                 }
-                if (dist <= CalculatorSettings.ContactRadius)
+                if (dist <= Settings.Calc.ContactRadius)
                 {
                     numberOfContact++;
                 }
-                if (dist <= CalculatorSettings.InteractionRadius)
+                if (dist <= Settings.Calc.InteractionRadius)
                 {
                     site.AddAtomToInteractionField(nSite.OccupiedAtom);
                 }
             }
             var prohibitedReason = forbRadius ? ProhibitedReason.ForbiddenRadius : ProhibitedReason.None;
-            if (numberOfContact < CalculatorSettings.ContactRule)
+            if (numberOfContact < Settings.Calc.ContactRule)
             {
                 prohibitedReason = prohibitedReason == ProhibitedReason.None ? ProhibitedReason.ContactRule : ProhibitedReason.All;
             }
@@ -162,14 +162,13 @@ namespace kMCCoatings.Core
             var availableCells = new Point3D[density];
             var generated = new List<Point3D>(density);
             int count = 0, valid = 0;
-            var rnd = new Random();
             while (valid <= density - 1)
             {
                 int x, y;
                 do
                 {
-                    x = rnd.Next((int)CalculatorSettings.Dimension.X);
-                    y = rnd.Next((int)CalculatorSettings.Dimension.Y);
+                    x = Settings.Rnd.Next((int)Settings.Calc.Dimension.X);
+                    y = Settings.Rnd.Next((int)Settings.Calc.Dimension.Y);
                 }
                 while (generated.Any(p => p.X == x && p.Y == y));
                 generated.Add(new Point3D(x, y, HighestNotEmptyCell));
@@ -185,6 +184,10 @@ namespace kMCCoatings.Core
                     else if (!isCellFree)
                     {
                         generated[count] = new Point3D(x, y, generated[count].Z + 1);
+                        while (GetSites(generated[count], 1).Any(x => x.SiteStatus == SiteStatus.Occupied))
+                        {
+                            generated[count] = new Point3D(x, y, generated[count].Z + 1);
+                        }
                         break;
                     }
                     else
@@ -192,11 +195,10 @@ namespace kMCCoatings.Core
                         generated[count] = new Point3D(x, y, generated[count].Z - 1);
                     }
                 }
-                if (isCellFree)
-                {
-                    availableCells[valid] = generated[count];
-                    valid++;
-                }
+                availableCells[valid] = generated[count];
+                valid++;
+                HighestNotEmptyCell = HighestNotEmptyCell <= generated[count].Z ? generated[count].Z + 1 : HighestNotEmptyCell;
+
                 count++;
             }
             return availableCells;

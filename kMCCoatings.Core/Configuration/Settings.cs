@@ -9,6 +9,22 @@ namespace kMCCoatings.Core.Configuration
     {
         public Element[] Elements { get; set; }
 
+        private int? _rndSeed;
+        public int? RndSeed
+        {
+            get
+            {
+                return _rndSeed;
+            }
+            set
+            {
+                _rndSeed = value;
+                Rnd = _rndSeed != null ? new Random((int)_rndSeed) : new Random();
+            }
+        }
+
+        public Random Rnd { get; set; }
+
         public DepositionSettings Deposition { get; set; }
 
         public CalculatorSettings Calculator { get; set; }
