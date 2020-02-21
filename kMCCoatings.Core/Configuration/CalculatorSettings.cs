@@ -22,7 +22,7 @@ namespace kMCCoatings.Core.Configuration
         public double CrossRadius { get; set; }
 
         /// <summary>
-        /// Радиус сферы вокруг атома, куда может диффунзировать атом
+        /// Радиус сферы вокруг атома, куда может диффундировать атом
         /// </summary>
         public double DiffusionRadius { get; set; }
 
@@ -50,6 +50,5 @@ namespace kMCCoatings.Core.Configuration
         /// Минимальное количество связей для определения доступности сайта
         /// </summary>
         public int ContactRule { get; set; }
-
     }
 }

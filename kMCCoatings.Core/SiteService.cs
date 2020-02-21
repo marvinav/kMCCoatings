@@ -70,7 +70,7 @@ namespace kMCCoatings.Core
             var key = new Point3D(pX, pY, pZ);
             if (SitesByCells.TryGetValue(key, out var oldSites))
             {
-                if (oldSites.Contains(site)) throw new Exception("ПОпытка добавить существующий сайт");
+                if (oldSites.Contains(site)) throw new Exception("Попытка добавить существующий сайт");
                 oldSites.Add(site);
             }
             else

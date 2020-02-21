@@ -68,7 +68,7 @@ namespace kMCCoatings.Core
         /// </summary>
         public void Start()
         {
-
+            // Здесь что-то должно быть, но я не знаю
         }
 
         public void Deposit()
@@ -94,6 +94,12 @@ namespace kMCCoatings.Core
         /// <summary>
         public void AddAtom(Point3D coord, Element element)
         {
+            // Получаем список сайтов и атомов, изменившихся после добавления нового атома
+            // 1 Нужно для каждого соседнего атома посчитать наличие возможных сайтов
+            // 2 Для всех соседних сайтов нужно проверить их запрещённость
+            var affectedSites = SiteService.GetSites(coord);
+            var affectedAtoms = new List<Site>();
+            var newSites = new List<Site>();
             // Формируем сайт
             var site = new Site
             {
@@ -104,12 +110,6 @@ namespace kMCCoatings.Core
             var atom = new Atom(element, site);
             Atoms.Add(atom);
             SiteService.Add(atom.Site);
-            // Получаем список сайтов и атомов, изменившихся после добавления нового атома
-            // 1 Нужно для каждого соседнего атома посчитать наличие возможных сайтов
-            // 2 Для всех соседних сайтов нужно проверить их запрещённость
-            var affectedSites = SiteService.GetSites(coord).Except(new List<Site> { atom.Site });
-            var affectedAtoms = new List<Site>();
-            var newSites = new List<Site>();
 
             foreach (var afSite in affectedSites)
             {
@@ -117,7 +117,6 @@ namespace kMCCoatings.Core
                 if (dist <= Settings.Calc.ForbiddenRadius) // Если в запрещённой области вокруг атома есть сайты, то они становятся запрещёнными
                 {
                     afSite.AddProhibitedReason(ProhibitedReason.ForbiddenRadius);
-                    atom.Site.AddProhibitedReason(ProhibitedReason.ForbiddenRadius);
                 }
                 else if (dist <= Settings.Calc.PossibleToDifuseRadius && afSite.SiteType == SiteType.Free) // Смотрим возможные димеры
                 {

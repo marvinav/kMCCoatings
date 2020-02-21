@@ -64,10 +64,6 @@ namespace kMCCoatings.Test
             {
                 Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == flow.ElementId) == flow.Concentration);
             }
-            // foreach (var element in Calculator.Settings.Deposition.ConcentrationFlow[0])
-            // {
-            //     Assert.True(Calculator.Atoms.Count(x => x.Element.Id == element.Element.Id) == element.Concentration);
-            // }
         }
     }
 

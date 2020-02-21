@@ -8,6 +8,7 @@ namespace kMCCoatings.Core.Configuration
     public class Settings
     {
         public Element[] Elements { get; set; }
+
         public DepositionSettings Deposition { get; set; }
 
         public CalculatorSettings Calculator { get; set; }
