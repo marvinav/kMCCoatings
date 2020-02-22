@@ -79,7 +79,9 @@ namespace kMCCoatings.Core
             }
         }
 
-        // Проверяет, принадлежат ли сайты к одной клетки пространства
+        /// <summary>
+        /// Проверяет, принадлежат ли сайты к одной клетки пространства
+        /// </summary>
         public bool IsOneCell(Site firstPoint, Site secondPoint)
         {
             return (Math.Floor(firstPoint.Coordinates.X) - Math.Floor(secondPoint.Coordinates.X)) == 0 &&
