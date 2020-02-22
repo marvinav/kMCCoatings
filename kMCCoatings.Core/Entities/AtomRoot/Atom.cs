@@ -13,6 +13,11 @@ namespace kMCCoatings.Core.Entities.AtomRoot
     public class Atom
     {
         /// <summary>
+        /// Глобальный счётчик кол-ва атомов
+        /// </summary>
+        public static int AtomCount { get; set; } = 0;
+
+        /// <summary>
         /// Номер атома в вычислениях
         /// </summary>
         public int AtomNumber { get; set; }
@@ -32,6 +37,15 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         /// </summary>
         public List<Transition> Transitions { get; set; }
 
+        public Atom(Element element, Site site)
+        {
+            Element = element;
+            site.OccupiedAtom = this;
+            Site = site;
+            AtomNumber = AtomCount;
+            AtomCount++;
+        }
+
         /// <summary>
         /// Формируем список переходов для атома
         /// </summary>
@@ -40,13 +54,6 @@ namespace kMCCoatings.Core.Entities.AtomRoot
             var oldEnergy = Site.EnergyInSite(Element.Id);
             var difEnergy = oldEnergy - targetSite.EnergyInSite(Element.Id);
             return new Transition(this, targetSite, difEnergy);
-        }
-
-        public Atom(Element element, Site site)
-        {
-            Element = element;
-            site.OccupiedAtom = this;
-            Site = site;
         }
     }
 }

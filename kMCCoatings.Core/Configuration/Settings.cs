@@ -10,6 +10,7 @@ namespace kMCCoatings.Core.Configuration
         public Element[] Elements { get; set; }
 
         private int? _rndSeed;
+
         public int? RndSeed
         {
             get

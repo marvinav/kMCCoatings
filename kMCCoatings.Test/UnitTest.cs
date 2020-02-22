@@ -49,13 +49,9 @@ namespace kMCCoatings.Test
         }
 
         [Fact]
-        public void Deposit()
+        public void ConcentrationAfterDeposit()
         {
             var depositedAtoms = new List<Site>();
-            for (int i = 0; i < Calculator.Settings.Deposition.ConcentrationFlow.Length; i++)
-            {
-                Calculator.Deposit();
-            }
             var occupiedCells = Calculator.SiteService.SitesByCells.
                 Where(x => x.Value.Count > 0).
                 Select(x => x.Value).
@@ -79,6 +75,11 @@ namespace kMCCoatings.Test
             {
                 Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == element.Key) == element.Value);
             }
+        }
+
+        [Fact]
+        public void UniqueSiteAddAtom()
+        {
             foreach (var site in Calculator.Atoms.Select(x => x.Site.Coordinates))
             {
                 var count = 0;
@@ -95,6 +96,20 @@ namespace kMCCoatings.Test
                 }
             }
         }
+
+        /// <summary>
+        /// Счётчик атомов
+        /// </summary>
+        [Fact]
+        public void AtomCounter()
+        {
+            var orderedAtoms = Calculator.Atoms.OrderBy(x => x.AtomNumber).ToList();
+            for (int i = 0; i < orderedAtoms.Count; i++)
+            {
+                Assert.True(orderedAtoms[i].AtomNumber == i);
+            }
+            Assert.True(Atom.AtomCount == orderedAtoms.Count);
+        }
     }
 
     public class Test
@@ -106,6 +121,10 @@ namespace kMCCoatings.Test
         public Test()
         {
             Calculator = CalculatorFabric.CreateCalculator(settingsPath);
+            for (int i = 0; i < Calculator.Settings.Deposition.ConcentrationFlow.Length; i++)
+            {
+                Calculator.Deposit();
+            }
         }
     }
 }
