@@ -198,7 +198,6 @@ namespace kMCCoatings.Core
                 availableCells[valid] = generated[count];
                 valid++;
                 HighestNotEmptyCell = HighestNotEmptyCell <= generated[count].Z ? generated[count].Z + 1 : HighestNotEmptyCell;
-
                 count++;
             }
             return availableCells;

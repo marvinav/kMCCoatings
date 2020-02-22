@@ -64,10 +64,21 @@ namespace kMCCoatings.Test
             {
                 depositedAtoms.AddRange(sites.Where(x => x.SiteStatus == SiteStatus.Occupied));
             }
-            // foreach (var flow in Calculator.Settings.Deposition.ConcentrationFlow)
-            // {
-            //     Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == flow.ElementId) == flow.Concentration);
-            // }
+            var elementConcentration = new Dictionary<int, int>();
+            foreach (var flow in Calculator.Settings.Deposition.ConcentrationFlow)
+            {
+                foreach (var element in flow)
+                {
+                    if (!elementConcentration.TryAdd(element.ElementId, element.Concentration))
+                    {
+                        elementConcentration[element.ElementId] += element.Concentration;
+                    }
+                }
+            }
+            foreach (var element in elementConcentration)
+            {
+                Assert.True(depositedAtoms.Count(x => x.OccupiedAtom.Element.Id == element.Key) == element.Value);
+            }
             foreach (var site in Calculator.Atoms.Select(x => x.Site.Coordinates))
             {
                 var count = 0;
@@ -79,7 +90,7 @@ namespace kMCCoatings.Test
                     }
                     if (count > 1)
                     {
-                        var a = s;
+                        Assert.False(count < 2);
                     }
                 }
             }
