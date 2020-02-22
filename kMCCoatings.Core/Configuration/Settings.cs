@@ -7,6 +7,8 @@ namespace kMCCoatings.Core.Configuration
 {
     public class Settings
     {
+        public string OutputPath { get; set; }
+
         public Element[] Elements { get; set; }
 
         private int? _rndSeed;

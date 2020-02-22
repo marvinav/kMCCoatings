@@ -8,6 +8,7 @@ using MathNet.Spatial.Euclidean;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +57,11 @@ namespace kMCCoatings.Core
 
         public Deposition Deposition { get; set; }
 
+        /// <summary>
+        /// Шаг интегрирования
+        /// </summary>
+        public int Step { get; set; }
+
         public Calculator(Settings settings)
         {
             Settings = settings;
@@ -69,6 +75,14 @@ namespace kMCCoatings.Core
         public void Start()
         {
             // Здесь что-то должно быть, но я не знаю
+        }
+
+        public void MakeStep()
+        {
+            Step++;
+            Deposit();
+            // Diffuse();
+            SaveAtomPosition(Atoms).Wait();
         }
 
         public void Deposit()
@@ -186,6 +200,16 @@ namespace kMCCoatings.Core
                 }
             }
             return transitions;
+        }
+
+        public async Task SaveAtomPosition(List<Atom> atoms)
+        {
+            //TODO: сохранять номер атома и его позицию только при появлении и её изменении
+            using var file = File.CreateText($"{Settings.OutputPath}\\{Step}.csv");
+            foreach (var atom in atoms)
+            {
+                await file.WriteLineAsync($"{atom.AtomNumber},{atom.Site.Coordinates.X},{atom.Site.Coordinates.Y},{atom.Site.Coordinates.Z}");
+            }
         }
     }
 }

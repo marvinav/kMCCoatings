@@ -123,7 +123,7 @@ namespace kMCCoatings.Test
             Calculator = CalculatorFabric.CreateCalculator(settingsPath);
             for (int i = 0; i < Calculator.Settings.Deposition.ConcentrationFlow.Length; i++)
             {
-                Calculator.Deposit();
+                Calculator.MakeStep();
             }
         }
     }

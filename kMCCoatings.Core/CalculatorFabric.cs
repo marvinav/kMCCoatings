@@ -34,8 +34,8 @@ namespace kMCCoatings.Core
                     throw new Exception($"Обнаружен не объявленный элемент");
                 }
             }
-
             ConcentrationFlow(settings);
+            CreateOutputDir(settings.OutputPath);
             return new Calculator(settings);
         }
 
@@ -62,6 +62,11 @@ namespace kMCCoatings.Core
                 }
             }
             return true;
+        }
+
+        public static void CreateOutputDir(string path)
+        {
+            Directory.CreateDirectory(path);
         }
     }
 }
