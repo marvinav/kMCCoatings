@@ -18,6 +18,7 @@
         {
             "id": 7,
             "name": "N",
+            "energy": 0,
             "interactionEnergy": {
                 "7": "2",
                 "22": "2",
@@ -32,6 +33,7 @@
         {
             "id": 22,
             "name": "Ti",
+            "energy": 150,
             "interactionEnergy": {
                 "7": "2",
                 "22": "1",
@@ -46,6 +48,7 @@
         {
             "id": 24,
             "name": "Cr",
+            "energy": 80,
             "interactionEnergy": {
                 "7": "2",
                 "22": "1",

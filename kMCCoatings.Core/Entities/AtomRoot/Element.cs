@@ -15,6 +15,11 @@ namespace kMCCoatings.Core.Entities.AtomRoot
         public int Id { get; set; }
 
         /// <summary>
+        /// Энергия атома при осаждении
+        /// </summary>
+        public double Energy { get; set; }
+
+        /// <summary>
         /// Энергия взаимодействия атомов
         /// </summary>
         public Dictionary<int, double> InteractionEnergy { get; set; }

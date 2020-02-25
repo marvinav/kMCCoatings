@@ -82,7 +82,7 @@ namespace kMCCoatings.Core
             Step++;
             Deposit();
             // Diffuse();
-            SaveAtomPosition(Atoms).Wait();
+            SaveAtomPosition(Atoms);
         }
 
         public void Deposit()
@@ -205,11 +205,13 @@ namespace kMCCoatings.Core
         public async Task SaveAtomPosition(List<Atom> atoms)
         {
             //TODO: сохранять номер атома и его позицию только при появлении и её изменении
-            using var file = File.CreateText($"{Settings.OutputPath}\\{Step}.csv");
+            using var file = File.CreateText($"{Settings.OutputPath}\\Coordinates-{Step}.csv");
+            var coordinates = "";
             foreach (var atom in atoms)
             {
-                await file.WriteLineAsync($"{atom.AtomNumber},{atom.Site.Coordinates.X},{atom.Site.Coordinates.Y},{atom.Site.Coordinates.Z}");
+                coordinates += $"{atom.AtomNumber},{atom.Site.Coordinates.X},{atom.Site.Coordinates.Y},{atom.Site.Coordinates.Z}\n";
             }
+            await file.WriteLineAsync(coordinates).ConfigureAwait(false);
         }
     }
 }
