@@ -36,7 +36,7 @@ namespace kMCCoatings.Core
         /// Список переходов, которые будут осуществляться в этой итерации.
         /// </summary>
 
-        public Dictionary<Atom, List<Transition>> Transitions { get; set; } = new Dictionary<Atom, List<Transition>>();
+        public List<Transition>[] Transitions { get; set; }
 
         /// <summary>
         /// Список свободных сайтов
@@ -67,6 +67,7 @@ namespace kMCCoatings.Core
             Settings = settings;
             Deposition = new Deposition(settings.Deposition.ConcentrationFlow);
             SiteService = new SiteService(settings);
+            Transitions = new List<Transition>[settings.Calculator.AtomLimits];
         }
 
         /// <summary>
@@ -164,13 +165,14 @@ namespace kMCCoatings.Core
             foreach (var afAtom in affectedAtoms.Union(new List<Site>() { atom.Site }))
             {
                 var newTrans = CalculateTransition(afAtom.OccupiedAtom);
-                if (Transitions.TryGetValue(afAtom.OccupiedAtom, out var oldTransitions))
+                var oldTrans = Transitions[afAtom.OccupiedAtom.AtomNumber];
+                if (oldTrans != null)
                 {
-                    Transitions[afAtom.OccupiedAtom] = newTrans;
+                    oldTrans.AddRange(newTrans);
                 }
                 else
                 {
-                    Transitions.Add(afAtom.OccupiedAtom, newTrans);
+                    oldTrans = newTrans;
                 }
             }
         }

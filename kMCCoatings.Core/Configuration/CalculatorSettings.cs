@@ -17,6 +17,11 @@ namespace kMCCoatings.Core.Configuration
         public Point3D Dimension { get; set; }
 
         /// <summary>
+        /// The limit of atoms in calculation (with evaporated)
+        /// </summary>
+        public int AtomLimits { get; set; }
+
+        /// <summary>
         /// Радиус сферы вокруг атома, которая зависит от положения атома
         /// </summary>
         public double CrossRadius { get; set; }

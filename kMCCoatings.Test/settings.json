@@ -2,6 +2,7 @@
     "rndSeed": 1,
     "outputPath": "C:\\Users\\av_ch\\source\\repos\\kMCCoatings\\kMCCoatings.Test\\results",
     "calculator": {
+        "atomLimits": 1000000,
         "dimension": {
             "x": 20,
             "y": 20,
