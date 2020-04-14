@@ -110,7 +110,7 @@ namespace kMCCoatings.Core
             //TODO: выбор энергии
             //TODO: диффузия
         }
-
+        
         /// <summary>
         /// Добавить атом к вычислениям
         /// <summary>
